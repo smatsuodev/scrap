@@ -1,15 +1,21 @@
 import { createRoot } from 'react-dom/client'
 import { useState } from 'react'
+import './tailwind.css'
 
 function App() {
   return (
     <>
-      <h1>Hello, Hono with React!</h1>
-      <h2>Example of useState()</h2>
-      <Counter />
-      <h2>Example of API fetch()</h2>
-      <ClockButton />
+      <FragmentForm />
     </>
+  )
+}
+
+function FragmentForm() {
+  return (
+    <form action=''>
+      <textarea name='content' id='content' />
+      <input type='submit' value='投稿' />
+    </form>
   )
 }
 
@@ -55,4 +61,7 @@ const domNode = document.getElementById('root')
 if (domNode) {
   const root = createRoot(domNode)
   root.render(<App />)
+}
+function useForm() {
+  throw new Error('Function not implemented.')
 }
