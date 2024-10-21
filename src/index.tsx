@@ -1,12 +1,37 @@
 import { Hono } from 'hono'
-import { renderer } from './renderer'
+import { renderToString } from 'react-dom/server'
 
 const app = new Hono()
 
-app.use(renderer)
+app.get('/api/clock', (c) => {
+  return c.json({
+    time: new Date().toLocaleTimeString(),
+  })
+})
 
 app.get('/', (c) => {
-  return c.render(<h1>Hello!</h1>)
+  return c.html(
+    renderToString(
+      <html lang='ja'>
+        <head>
+          <meta charSet='utf-8' />
+          <meta content='width=device-width, initial-scale=1' name='viewport' />
+          <link
+            rel='stylesheet'
+            href='https://cdn.simplecss.org/simple.min.css'
+          />
+          {import.meta.env.PROD ? (
+            <script type='module' src='/static/client.js' />
+          ) : (
+            <script type='module' src='/src/client.tsx' />
+          )}
+        </head>
+        <body>
+          <div id='root' />
+        </body>
+      </html>,
+    ),
+  )
 })
 
 export default app
