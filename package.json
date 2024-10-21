@@ -1,22 +1,20 @@
 {
   "name": "scrap",
+  "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
-    "lint": "biome check",
-    "lint:fix": "biome check --fix"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "wrangler pages dev",
+    "deploy": "$npm_execpath run build && wrangler pages deploy"
   },
   "dependencies": {
-    "hono": "^4.6.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "hono": "^4.6.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@cloudflare/workers-types": "^4.20240925.0",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
-    "vite": "^5.4.9",
-    "wrangler": "^3.79.0"
+    "@cloudflare/workers-types": "^4.20240529.0",
+    "@hono/vite-build": "^1.0.0",
+    "@hono/vite-dev-server": "^0.15.1",
+    "vite": "^5.2.12",
+    "wrangler": "^3.57.2"
   }
 }
