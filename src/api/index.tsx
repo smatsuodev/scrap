@@ -1,3 +1,4 @@
+import { ColorSchemeScript } from '@mantine/core'
 import { Hono } from 'hono'
 import { renderToString } from 'react-dom/server'
 
@@ -22,6 +23,7 @@ app.get('/', (c) => {
           ) : (
             <script type='module' src='/src/client/index.tsx' />
           )}
+          <ColorSchemeScript />
         </head>
         <body>
           <div id='root' />
