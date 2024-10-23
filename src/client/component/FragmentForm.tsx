@@ -1,14 +1,14 @@
 import { Button, Container, Group, Stack, Textarea, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import type { Fragment } from '@/client/model/fragment'
+import type { FragmentInput } from '@/client/model/fragment'
 
 interface FragmentFormProps {
-  onSubmit: (newFragment: Fragment) => void
+  onSubmit: (input: FragmentInput) => void
 }
 
 export function FragmentForm({ onSubmit }: FragmentFormProps) {
-  const form = useForm<Fragment>({
+  const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
       content: '',
@@ -18,9 +18,8 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
         content.length > 0 ? null : '1文字入力してください',
     },
   })
-  const handleSubmit = form.onSubmit((values) => {
+  const handleSubmit = form.onSubmit(async (values) => {
     console.log(values)
-    onSubmit(values)
     form.reset()
   })
 

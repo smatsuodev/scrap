@@ -4,8 +4,11 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build --mode client && vite build",
-    "preview": "$npm_execpath run build && wrangler pages dev",
+    "watch:client": "vite build --mode client --watch",
+    "watch:api": "vite build --watch",
+    "preview": "wrangler pages dev dist",
     "deploy": "$npm_execpath run build && wrangler pages deploy",
+    "migrate": "wrangler d1 migrations apply scrap",
     "lint": "biome check",
     "lint:fix": "biome check --fix"
   },

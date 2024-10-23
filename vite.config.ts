@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
           input: './src/client/index.tsx',
           output: {
             entryFileNames: 'static/client.js',
+            assetFileNames: 'static/assets/[name].[ext]',
           },
         },
       },
@@ -26,7 +27,9 @@ export default defineConfig(({ mode }) => {
       external: ['react', 'react-dom'],
     },
     plugins: [
-      pages(),
+      pages({
+        entry: 'src/api/index.tsx',
+      }),
       devServer({
         entry: 'src/api/index.tsx',
       }),
