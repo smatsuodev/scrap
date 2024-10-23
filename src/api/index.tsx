@@ -2,31 +2,35 @@ import type { FragmentInput, Fragment } from '@/client/model/fragment'
 import { ColorSchemeScript } from '@mantine/core'
 import { Hono } from 'hono'
 import { renderToString } from 'react-dom/server'
+import { zValidator } from '@hono/zod-validator'
+import { z } from 'zod'
 
 interface D1Bindings {
   DB: D1Database
 }
 
+const dataStore = [{ id: 1, content: 'hello' }]
+
 const api = new Hono<{ Bindings: D1Bindings }>()
-api
-  .get('/fragments', async (c) => {
-    return c.json(
-      await c.env.DB.prepare('SELECT * FROM fragments').all<Fragment>(),
-    )
+  .get('/fragments', (c) => {
+    return c.json(dataStore)
   })
-  .post(async (c) => {
-    const { content } = await c.req.parseBody<FragmentInput>()
+  .post(
+    '/fragments',
+    zValidator(
+      'json',
+      z.object({
+        content: z.string(),
+      }),
+    ),
+    (c) => {
+      const { content } = c.req.valid('json')
+      dataStore.push({ id: dataStore.length + 1, content })
+      return c.body(null, 201)
+    },
+  )
 
-    c.env.DB.prepare('INSERT INTO fragments (contetn) VALUES (?)')
-      .bind(content)
-      .run()
-
-    return c.status(201)
-  })
-
-const app = new Hono()
-
-app.get('/', (c) => {
+const app = new Hono().get('/', (c) => {
   return c.html(
     renderToString(
       <html lang='ja'>
@@ -49,8 +53,7 @@ app.get('/', (c) => {
   )
 })
 
-api.get('/hello', (c) => c.text('hello'))
-
 app.route('/api', api)
 
 export default app
+export type ApiType = typeof api

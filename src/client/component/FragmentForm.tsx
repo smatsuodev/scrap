@@ -19,6 +19,7 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
     },
   })
   const handleSubmit = form.onSubmit(async (values) => {
+    onSubmit(values)
     console.log(values)
     form.reset()
   })
