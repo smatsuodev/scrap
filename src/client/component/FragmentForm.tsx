@@ -2,25 +2,31 @@ import { Button, Container, Group, Stack, Textarea, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
 import type { FragmentInput } from '@/client/model/fragment'
+import { useCallback } from 'react'
 
 interface FragmentFormProps {
   onSubmit: (input: FragmentInput) => void
 }
 
+const LOCAL_STORAGE_KEY = 'draft-fragment'
+
 export function FragmentForm({ onSubmit }: FragmentFormProps) {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      content: '',
+      content: localStorage.getItem(LOCAL_STORAGE_KEY) ?? '',
     },
     validate: {
       content: (content) =>
         content.length > 0 ? null : '1文字入力してください',
     },
+    onValuesChange: ({ content }) => {
+      localStorage.setItem(LOCAL_STORAGE_KEY, content)
+    },
   })
   const handleSubmit = form.onSubmit(async (values) => {
     onSubmit(values)
-    console.log(values)
+    localStorage.removeItem(LOCAL_STORAGE_KEY)
     form.reset()
   })
 
