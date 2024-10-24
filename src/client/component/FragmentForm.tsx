@@ -9,6 +9,9 @@ interface FragmentFormProps {
 }
 
 const LOCAL_STORAGE_KEY_NEW_FRAGMENT = 'draft-new-fragment'
+function generateLocalStorageKeyForEditFragment(id: number) {
+  return `draft-fragment-${id}`
+}
 
 export function FragmentForm({ onSubmit }: FragmentFormProps) {
   const form = useForm({
