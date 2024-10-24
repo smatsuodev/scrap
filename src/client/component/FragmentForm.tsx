@@ -1,7 +1,7 @@
+import type { FragmentInput } from '@/client/model/fragment'
 import { Button, Container, Group, Stack, Textarea, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import type { FragmentInput } from '@/client/model/fragment'
 import { useCallback } from 'react'
 
 interface FragmentFormProps {
