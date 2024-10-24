@@ -1,19 +1,20 @@
-import type { FragmentInput, Fragment } from '@/client/model/fragment'
 import { ColorSchemeScript } from '@mantine/core'
 import { Hono } from 'hono'
 import { renderToString } from 'react-dom/server'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
+import { drizzle } from 'drizzle-orm/d1'
+import { fragmentsTable } from '@/db/schema'
 
 interface D1Bindings {
   DB: D1Database
 }
 
-const dataStore = [{ id: 1, content: 'hello' }]
-
 const api = new Hono<{ Bindings: D1Bindings }>()
-  .get('/fragments', (c) => {
-    return c.json(dataStore)
+  .get('/fragments', async (c) => {
+    const db = drizzle(c.env.DB)
+    const fragments = await db.select().from(fragmentsTable)
+    return c.json(fragments)
   })
   .post(
     '/fragments',
@@ -23,9 +24,10 @@ const api = new Hono<{ Bindings: D1Bindings }>()
         content: z.string(),
       }),
     ),
-    (c) => {
+    async (c) => {
       const { content } = c.req.valid('json')
-      dataStore.push({ id: dataStore.length + 1, content })
+      const db = drizzle(c.env.DB)
+      await db.insert(fragmentsTable).values({ content }).execute()
       return c.body(null, 201)
     },
   )
