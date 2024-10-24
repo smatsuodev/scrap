@@ -2,7 +2,7 @@ import './tailwind.css'
 import '@mantine/core/styles.css'
 import { createRoot } from 'react-dom/client'
 import { createTheme, MantineProvider } from '@mantine/core'
-import { ScrapViewer } from '@/client/component/Scrap'
+import { ScrapViewer } from '@/client/component/ScrapViewer'
 
 const theme = createTheme({})
 

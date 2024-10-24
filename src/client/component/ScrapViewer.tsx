@@ -1,7 +1,7 @@
 import { Container, Divider, Stack } from '@mantine/core'
 import { FragmentForm } from './FragmentForm'
 import type { Fragment, FragmentInput } from '@/client/model/fragment'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FragmentViewer } from '@/client/component/FragmentViewer'
 import { hc } from 'hono/client'
 import type { ApiType } from '@/api'
