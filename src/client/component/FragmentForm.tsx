@@ -8,25 +8,25 @@ interface FragmentFormProps {
   onSubmit: (input: FragmentInput) => void
 }
 
-const LOCAL_STORAGE_KEY = 'draft-fragment'
+const LOCAL_STORAGE_KEY_NEW_FRAGMENT = 'draft-new-fragment'
 
 export function FragmentForm({ onSubmit }: FragmentFormProps) {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      content: localStorage.getItem(LOCAL_STORAGE_KEY) ?? '',
+      content: localStorage.getItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT) ?? '',
     },
     validate: {
       content: (content) =>
         content.length > 0 ? null : '1文字入力してください',
     },
     onValuesChange: ({ content }) => {
-      localStorage.setItem(LOCAL_STORAGE_KEY, content)
+      localStorage.setItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT, content)
     },
   })
   const handleSubmit = form.onSubmit(async (values) => {
     onSubmit(values)
-    localStorage.removeItem(LOCAL_STORAGE_KEY)
+    localStorage.removeItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT)
     form.reset()
   })
 
