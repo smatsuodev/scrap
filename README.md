@@ -1,3 +1,9 @@
+## 環境構築
+
+1. `cp .env.sample .env`
+2. 中身を適宜書き換え
+3. `yarn migrate:remote`を実行して、マイグレーションが成功することを確認
+
 ## Cloudflare Pages へのデプロイ
 
 - `yarn deploy`
