@@ -1,8 +1,4 @@
-```txt
-npm install
-npm run dev
-```
+## マイグレーションのやり方
 
-```txt
-npm run deploy
-```
+- ローカル: yarn migrate
+- 本番環境: yarn migrate:remote
