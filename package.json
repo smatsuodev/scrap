@@ -3,9 +3,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build --mode client && vite build",
-    "watch:client": "vite build --mode client --watch",
-    "watch:api": "vite build --watch",
+    "build": "$npm_execpath run build:client && $npm_execpath run build:api",
+    "build:client": "vite build --mode client",
+    "build:api": "vite build",
     "preview": "wrangler pages dev dist",
     "deploy": "$npm_execpath run build && wrangler pages deploy && $npm_execpath run migrate:remote",
     "migrate": "drizzle-kit generate && wrangler d1 migrations apply scrap",
