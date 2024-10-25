@@ -1,11 +1,15 @@
-import type { FragmentInput } from '@/client/model/fragment'
-import { Button, Container, Group, Stack, Textarea, Title } from '@mantine/core'
+import { Button, Group, Stack, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import { useCallback } from 'react'
+import type { FragmentInput } from '@/client/model/fragment'
+import FragmentEditor from '@/client/component/FragmentEditor'
 
 interface FragmentFormProps {
   onSubmit: (input: FragmentInput) => void
+}
+
+export interface FragmentFormValues {
+  content: string
 }
 
 const LOCAL_STORAGE_KEY_NEW_FRAGMENT = 'draft-new-fragment'
@@ -14,7 +18,7 @@ function generateLocalStorageKeyForEditFragment(id: number) {
 }
 
 export function FragmentForm({ onSubmit }: FragmentFormProps) {
-  const form = useForm({
+  const form = useForm<FragmentFormValues>({
     mode: 'uncontrolled',
     initialValues: {
       content: localStorage.getItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT) ?? '',
@@ -27,11 +31,13 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
       localStorage.setItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT, content)
     },
   })
+
   const handleSubmit = form.onSubmit(async (values) => {
     onSubmit(values)
     localStorage.removeItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT)
     form.reset()
   })
+  const onKeyDown = getHotkeyHandler([['mod+Enter', handleSubmit]])
 
   return (
     <Stack>
@@ -39,15 +45,7 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
         新しいフラグメント
       </Title>
       <form onSubmit={handleSubmit}>
-        <Textarea
-          label='投稿内容'
-          placeholder='投稿する文章を入力...'
-          key={form.key('content')}
-          {...form.getInputProps('content')}
-          onKeyDown={getHotkeyHandler([['mod+Enter', handleSubmit]])}
-          autosize
-          minRows={4}
-        />
+        <FragmentEditor form={form} onKeyDown={onKeyDown} />
         <Group justify='flex-end' mt='md'>
           <Button type='submit'>投稿</Button>
         </Group>
