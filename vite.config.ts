@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, './src'),
+          // アイコンごとにチャンクが生成されるバグの workaround
+          // refs: https://github.com/tabler/tabler-icons/issues/1233#issuecomment-2428245119
+          '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
         },
       },
     }
@@ -37,6 +40,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
   }
