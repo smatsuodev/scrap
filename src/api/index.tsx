@@ -5,6 +5,7 @@ import { drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
 import { renderToString } from 'react-dom/server'
 import { z } from 'zod'
+import { eq } from "drizzle-orm"
 
 interface D1Bindings {
   DB: D1Database
@@ -29,6 +30,34 @@ const api = new Hono<{ Bindings: D1Bindings }>()
       const db = drizzle(c.env.DB)
       await db.insert(fragmentsTable).values({ content }).execute()
       return c.body(null, 201)
+    },
+  )
+  .put(
+    '/fragments/:id',
+    zValidator(
+      'json',
+      // TODO: post と共通化したい
+      z.object({
+        content: z.string(),
+      }),
+    ),
+    zValidator(
+      'param',
+      z.object({
+        id: z.string().transform(Number)
+      }),
+    ),
+    async (c) => {
+      const { id } = c.req.valid('param')
+      const { content } = c.req.valid('json')
+      const db = drizzle(c.env.DB)
+      await db
+        .update(fragmentsTable)
+        .set({ content })
+        .where(eq(fragmentsTable.id, id))
+
+      // TODO: 更新後の値を返す?
+      return c.body(null, 204)
     },
   )
 

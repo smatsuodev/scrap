@@ -21,6 +21,19 @@ export function ScrapViewer() {
     fetchFragments()
   }
 
+  const updateFragment = async (id: number, content: string) => {
+    await client.fragments[':id'].$put({
+      param: { id: id.toString() },
+      json: { content },
+    })
+
+    setFragments((fragments) =>
+      fragments.map((fragment) =>
+        fragment.id === id ? { ...fragment, content } : fragment,
+      ),
+    )
+  }
+
   useEffect(() => {
     fetchFragments()
   }, [fetchFragments])
@@ -29,7 +42,13 @@ export function ScrapViewer() {
     <Container mt='lg'>
       <Stack>
         {fragments.map((fragment) => (
-          <FragmentViewer key={fragment.id} fragment={fragment} />
+          <FragmentViewer
+            key={fragment.id}
+            fragment={fragment}
+            updateFragment={(content: string) =>
+              updateFragment(fragment.id, content)
+            }
+          />
         ))}
       </Stack>
       <Divider my='lg' />
