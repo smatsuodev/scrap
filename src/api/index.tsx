@@ -44,7 +44,7 @@ const api = new Hono<{ Bindings: D1Bindings }>()
     zValidator(
       'param',
       z.object({
-        id: z.string().transform(Number)
+        id: z.string().transform(Number),
       }),
     ),
     async (c) => {
@@ -68,9 +68,11 @@ const app = new Hono().get('/', (c) => {
         <head>
           <meta charSet='utf-8' />
           <meta content='width=device-width, initial-scale=1' name='viewport' />
-          <link rel='stylesheet' href='/static/assets/index.css' />
           {import.meta.env.PROD ? (
-            <script type='module' src='/static/client.js' />
+            <>
+              <link rel='stylesheet' href='/static/assets/index.css' />
+              <script type='module' src='/static/client.js' />
+            </>
           ) : (
             <script type='module' src='/src/client/index.tsx' />
           )}
