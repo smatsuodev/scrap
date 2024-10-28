@@ -2,9 +2,10 @@ import path from 'node:path'
 import build from '@hono/vite-build/cloudflare-pages'
 import devServer from '@hono/vite-dev-server'
 import adapter from '@hono/vite-dev-server/cloudflare'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { defineConfig } from 'vite'
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   if (mode === 'client') {
     return {
       build: {
@@ -21,6 +22,12 @@ export default defineConfig(({ mode }) => {
           '@': path.resolve(__dirname, './src'),
         },
       },
+      plugins: [
+        TanStackRouterVite({
+          routesDirectory: 'src/client/routes',
+          generatedRouteTree: 'src/client/routeTree.gen.ts',
+        }),
+      ],
     }
   }
 
@@ -33,6 +40,14 @@ export default defineConfig(({ mode }) => {
         adapter,
         entry: 'src/api/index.tsx',
       }),
+      ...(command === 'serve'
+        ? [
+            TanStackRouterVite({
+              routesDirectory: 'src/client/routes',
+              generatedRouteTree: 'src/client/routeTree.gen.ts',
+            }),
+          ]
+        : []),
     ],
     resolve: {
       alias: {
