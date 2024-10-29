@@ -1,4 +1,4 @@
-import { fragmentsTable } from '@/db/schema'
+import * as schema from '@/db/schema'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
 import { drizzle } from 'drizzle-orm/d1'
@@ -12,8 +12,8 @@ interface D1Bindings {
 
 const api = new Hono<{ Bindings: D1Bindings }>()
   .get('/fragments', async (c) => {
-    const db = drizzle(c.env.DB)
-    const fragments = await db.select().from(fragmentsTable)
+    const db = drizzle(c.env.DB, { schema })
+    const fragments = await db.query.fragments.findMany()
     return c.json(fragments)
   })
   .post(
@@ -26,8 +26,8 @@ const api = new Hono<{ Bindings: D1Bindings }>()
     ),
     async (c) => {
       const { content } = c.req.valid('json')
-      const db = drizzle(c.env.DB)
-      await db.insert(fragmentsTable).values({ content }).execute()
+      const db = drizzle(c.env.DB, { schema })
+      await db.insert(schema.fragments).values({ content }).execute()
       return c.body(null, 201)
     },
   )
