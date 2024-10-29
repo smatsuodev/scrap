@@ -1,15 +1,24 @@
 import './tailwind.css'
 import '@mantine/core/styles.css'
-import { ScrapViewer } from '@/client/component/ScrapViewer'
+import { routeTree } from '@/client/routeTree.gen'
 import { MantineProvider, createTheme } from '@mantine/core'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { createRoot } from 'react-dom/client'
 
 const theme = createTheme({})
 
+const router = createRouter({ routeTree })
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
 function App() {
   return (
     <MantineProvider theme={theme}>
-      <ScrapViewer />
+      <RouterProvider router={router} />
     </MantineProvider>
   )
 }
