@@ -1,15 +1,18 @@
 import type { Fragment } from '@/client/model/fragment'
 import { Button, Card, Text } from '@mantine/core'
 import { IconEdit } from '@tabler/icons-react'
-import { useState } from "react"
-import EditFragmentForm from "@/client/component/EditFragmentForm"
+import { useState } from 'react'
+import EditFragmentForm from '@/client/component/EditFragmentForm'
 
 interface FragmentViewerProps {
   fragment: Fragment
   updateFragment: (content: string) => Promise<void>
 }
 
-export function FragmentViewer({ fragment, updateFragment }: FragmentViewerProps) {
+export function FragmentViewer({
+  fragment,
+  updateFragment,
+}: FragmentViewerProps) {
   const [showEditor, setShowEditor] = useState(false)
 
   return (
