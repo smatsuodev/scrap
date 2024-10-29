@@ -4,7 +4,9 @@ import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 export const fragments = sqliteTable('fragments', {
   id: int().primaryKey({ autoIncrement: true }),
   content: text().notNull(),
-  scrapId: int('scrap_id').references(() => scraps.id),
+  scrapId: text('scrap_id')
+    .notNull()
+    .references(() => scraps.id),
 })
 
 export const fragmentsRelations = relations(fragments, ({ one }) => ({
@@ -15,7 +17,7 @@ export const fragmentsRelations = relations(fragments, ({ one }) => ({
 }))
 
 export const scraps = sqliteTable('scraps', {
-  id: text().notNull(),
+  id: text().primaryKey(),
   title: text().notNull(),
 })
 
