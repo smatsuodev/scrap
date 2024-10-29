@@ -1,23 +1,32 @@
 import * as schema from '@/db/schema'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
-import { drizzle } from 'drizzle-orm/d1'
+import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
+import { createMiddleware } from 'hono/factory'
 import { renderToString } from 'react-dom/server'
 import { z } from 'zod'
 
-interface D1Bindings {
-  DB: D1Database
+const drizzleMiddleware = createMiddleware(async (c, next) => {
+  c.set('db', drizzle(c.env.DB, { schema }))
+  await next()
+})
+
+type Env = {
+  Bindings: { DB: D1Database }
+  Variables: {
+    db: DrizzleD1Database<typeof schema> & { $client: D1Database }
+  }
 }
 
-const api = new Hono<{ Bindings: D1Bindings }>()
-  .get('/fragments', async (c) => {
-    const db = drizzle(c.env.DB, { schema })
-    const fragments = await db.query.fragments.findMany()
+const api = new Hono<Env>()
+  .get('/fragments', drizzleMiddleware, async (c) => {
+    const fragments = await c.var.db.query.fragments.findMany()
     return c.json(fragments)
   })
   .post(
     '/fragments',
+    drizzleMiddleware,
     zValidator(
       'json',
       z.object({
@@ -26,8 +35,7 @@ const api = new Hono<{ Bindings: D1Bindings }>()
     ),
     async (c) => {
       const { content } = c.req.valid('json')
-      const db = drizzle(c.env.DB, { schema })
-      await db.insert(schema.fragments).values({ content }).execute()
+      await c.var.db.insert(schema.fragments).values({ content }).execute()
       return c.body(null, 201)
     },
   )
