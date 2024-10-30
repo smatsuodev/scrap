@@ -17,6 +17,7 @@ import { Route as rootRoute } from './routes/__root'
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
+const ScrapsScrapIdLazyImport = createFileRoute('/scraps/$scrapId')()
 
 // Create/Update Routes
 
@@ -25,6 +26,14 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const ScrapsScrapIdLazyRoute = ScrapsScrapIdLazyImport.update({
+  id: '/scraps/$scrapId',
+  path: '/scraps/$scrapId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/scraps/$scrapId.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -37,6 +46,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/scraps/$scrapId': {
+      id: '/scraps/$scrapId'
+      path: '/scraps/$scrapId'
+      fullPath: '/scraps/$scrapId'
+      preLoaderRoute: typeof ScrapsScrapIdLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -44,32 +60,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/scraps/$scrapId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/scraps/$scrapId'
+  id: '__root__' | '/' | '/scraps/$scrapId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  ScrapsScrapIdLazyRoute: typeof ScrapsScrapIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  ScrapsScrapIdLazyRoute: ScrapsScrapIdLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -84,11 +105,15 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/scraps/$scrapId"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/scraps/$scrapId": {
+      "filePath": "scraps/$scrapId.lazy.tsx"
     }
   }
 }

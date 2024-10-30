@@ -47,6 +47,16 @@ const api = new Hono<Env>()
       return c.json(fragment, 201)
     },
   )
+  .get('/scraps/:id', drizzleMiddleware, async (c) => {
+    const scrapId = c.req.param('id')
+    const scrap = await c.var.db.query.scraps.findFirst({
+      where: (scraps, { eq }) => eq(scraps.id, scrapId),
+      with: {
+        fragments: true,
+      },
+    })
+    return c.json(scrap)
+  })
   .post(
     '/scraps',
     drizzleMiddleware,
@@ -67,7 +77,7 @@ const api = new Hono<Env>()
     },
   )
 
-const app = new Hono().get('/', (c) => {
+const app = new Hono().route('/api', api).get('*', (c) => {
   return c.html(
     renderToString(
       <html lang='ja'>
@@ -89,8 +99,6 @@ const app = new Hono().get('/', (c) => {
     ),
   )
 })
-
-app.route('/api', api)
 
 export default app
 export type ApiType = typeof api

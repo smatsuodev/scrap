@@ -6,19 +6,28 @@ import { hc } from 'hono/client'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FragmentForm } from './FragmentForm'
 
-export function ScrapViewer() {
+type ScrapViewerProps = {
+  scrapId: string
+}
+
+export function ScrapViewer(props: ScrapViewerProps) {
   const [fragments, setFragments] = useState<Fragment[]>([])
 
   const client = useMemo(() => hc<ApiType>('/api'), [])
 
   const fetchFragments = useCallback(async () => {
-    const res = await client.fragments.$get()
+    const res = await client.scraps[':id'].fragments.$get({
+      param: { id: props.scrapId },
+    })
     setFragments(await res.json())
-  }, [client])
+  }, [client, props.scrapId])
 
   const handleSubmit = async (input: FragmentInput) => {
-    await client.fragments.$post({ json: input })
-    fetchFragments()
+    await client.scraps[':id'].fragments.$post({
+      param: { id: props.scrapId },
+      json: input,
+    })
+    await fetchFragments()
   }
 
   useEffect(() => {
