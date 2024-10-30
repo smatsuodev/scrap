@@ -5,6 +5,7 @@ import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { renderToString } from 'react-dom/server'
+import { ulid } from 'ulid'
 import { z } from 'zod'
 
 const drizzleMiddleware = createMiddleware(async (c, next) => {
@@ -20,12 +21,15 @@ type Env = {
 }
 
 const api = new Hono<Env>()
-  .get('/fragments', drizzleMiddleware, async (c) => {
-    const fragments = await c.var.db.query.fragments.findMany()
+  .get('/scraps/:id/fragments', drizzleMiddleware, async (c) => {
+    const scrapId = c.req.param('id')
+    const fragments = await c.var.db.query.fragments.findMany({
+      where: (fragments, { eq }) => eq(fragments.scrapId, scrapId),
+    })
     return c.json(fragments)
   })
   .post(
-    '/fragments',
+    '/scraps/:id/fragments',
     drizzleMiddleware,
     zValidator(
       'json',
@@ -35,8 +39,31 @@ const api = new Hono<Env>()
     ),
     async (c) => {
       const { content } = c.req.valid('json')
-      await c.var.db.insert(schema.fragments).values({ content }).execute()
-      return c.body(null, 201)
+      const fragment = {
+        scrapId: c.req.param('id'),
+        content,
+      }
+      await c.var.db.insert(schema.fragments).values(fragment).execute()
+      return c.json(fragment, 201)
+    },
+  )
+  .post(
+    '/scraps',
+    drizzleMiddleware,
+    zValidator(
+      'json',
+      z.object({
+        title: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { title } = c.req.valid('json')
+      const scrap = {
+        id: ulid(),
+        title,
+      }
+      await c.var.db.insert(schema.scraps).values(scrap).execute()
+      return c.json(scrap, 201)
     },
   )
 
