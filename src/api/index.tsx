@@ -70,7 +70,7 @@ const api = new Hono<Env>()
     async (c) => {
       const { title } = c.req.valid('json')
       const scrap = {
-        id: ulid(),
+        id: ulid(Date.now()),
         title,
       }
       await c.var.db.insert(schema.scraps).values(scrap).execute()
