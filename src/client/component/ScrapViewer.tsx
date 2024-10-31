@@ -69,6 +69,11 @@ export function ScrapViewer(props: ScrapViewerProps) {
     setIsEditingTitle(false)
   })
 
+  const handleCancelEditTitleButtonClicked = useCallback(() => {
+    setIsEditingTitle(false)
+    titleForm.reset()
+  }, [titleForm])
+
   useEffect(() => {
     fetchScrap().then(setScrap)
   }, [fetchScrap])
@@ -89,8 +94,16 @@ export function ScrapViewer(props: ScrapViewerProps) {
                   ])}
                 />
               </Grid.Col>
-              <Grid.Col span={1}>
+              <Grid.Col span='content'>
                 <Button type='submit'>保存</Button>
+              </Grid.Col>
+              <Grid.Col span='content'>
+                <Button
+                  variant='default'
+                  onClick={handleCancelEditTitleButtonClicked}
+                >
+                  キャンセル
+                </Button>
               </Grid.Col>
             </Grid>
           </form>
