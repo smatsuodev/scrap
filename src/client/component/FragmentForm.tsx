@@ -1,8 +1,8 @@
 import type { FragmentInput } from '@/client/model/fragment'
-import { Button, Container, Group, Stack, Textarea, Title } from '@mantine/core'
+import { Button, Group, Stack, Textarea, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import { useCallback } from 'react'
+import { useEffect } from 'react'
 
 interface FragmentFormProps {
   onSubmit: (input: FragmentInput) => void
@@ -14,7 +14,7 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      content: localStorage.getItem(LOCAL_STORAGE_KEY) ?? '',
+      content: '',
     },
     validate: {
       content: (content) =>
@@ -29,6 +29,10 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
     localStorage.removeItem(LOCAL_STORAGE_KEY)
     form.reset()
   })
+
+  useEffect(() => {
+    form.setFieldValue('content', localStorage.getItem(LOCAL_STORAGE_KEY) ?? '')
+  }, [form])
 
   return (
     <Stack>
