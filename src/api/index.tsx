@@ -1,6 +1,7 @@
 import * as schema from '@/db/schema'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
+import { eq } from 'drizzle-orm'
 import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
@@ -74,6 +75,24 @@ const api = new Hono<Env>()
       }
       await c.var.db.insert(schema.scraps).values(scrap).execute()
       return c.json(scrap, 201)
+    },
+  )
+  .put(
+    '/scraps/:id',
+    drizzleMiddleware,
+    zValidator('json', z.object({ title: z.string() })),
+    async (c) => {
+      const { title } = c.req.valid('json')
+      const scrap = {
+        id: c.req.param('id'),
+        title,
+      }
+      await c.var.db
+        .update(schema.scraps)
+        .set(scrap)
+        .where(eq(schema.scraps.id, scrap.id))
+        .execute()
+      return c.json(scrap)
     },
   )
 
