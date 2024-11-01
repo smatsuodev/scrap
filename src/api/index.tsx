@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto'
 import * as schema from '@/db/schema'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
@@ -7,7 +6,6 @@ import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { renderToString } from 'react-dom/server'
-import { factory } from 'ulid'
 import { z } from 'zod'
 
 const drizzleMiddleware = createMiddleware(async (c, next) => {
@@ -72,7 +70,7 @@ const api = new Hono<Env>()
       const { title } = c.req.valid('json')
       // factoryでPRNGを指定しないと、本番ビルド時にエラーが発生する
       // 原因はulidのライブラリがprngを動的インポートで読み込んでいるためだと思う
-      const ulid = factory(() => randomBytes(1).readUInt8() / 0xff)
+      const { ulid } = await import('ulid')
       const scrap = {
         id: ulid(Date.now()),
         title,
