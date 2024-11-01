@@ -73,7 +73,7 @@ const api = new Hono<Env>()
         id: ulid(),
         title,
       }
-      await c.var.db.insert(schema.scraps).values(scrap).execute()
+      await c.var.db.insert(schema.scraps).values(scrap)
       return c.json(scrap, 201)
     },
   )
