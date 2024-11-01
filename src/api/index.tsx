@@ -6,7 +6,7 @@ import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { renderToString } from 'react-dom/server'
-import { detectPrng, factory } from 'ulid'
+import { ulid } from 'ulidx'
 import { z } from 'zod'
 
 const drizzleMiddleware = createMiddleware(async (c, next) => {
@@ -69,12 +69,8 @@ const api = new Hono<Env>()
     ),
     async (c) => {
       const { title } = c.req.valid('json')
-      // FIXME: ulidライブラリはdynamic requireでPRNGを読み込むが、Cloudflare Pagesでは動作しないため、Math.randomを使うことを許している
-      // Math.randomは安全ではないので対処法をいつか考える
-      const prng = detectPrng(true)
-      const ulid = factory(prng)
       const scrap = {
-        id: ulid(Date.now()),
+        id: ulid(),
         title,
       }
       await c.var.db.insert(schema.scraps).values(scrap).execute()
