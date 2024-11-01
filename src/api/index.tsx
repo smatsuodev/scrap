@@ -74,7 +74,7 @@ const api = new Hono<Env>()
       // 原因はulidのライブラリがprngを動的インポートで読み込んでいるためだと思う
       const ulid = factory(() => randomBytes(1).readUInt8() / 0xff)
       const scrap = {
-        id: ulid(),
+        id: ulid(Date.now()),
         title,
       }
       await c.var.db.insert(schema.scraps).values(scrap).execute()
