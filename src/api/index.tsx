@@ -68,8 +68,6 @@ const api = new Hono<Env>()
     ),
     async (c) => {
       const { title } = c.req.valid('json')
-      // factoryでPRNGを指定しないと、本番ビルド時にエラーが発生する
-      // 原因はulidのライブラリがprngを動的インポートで読み込んでいるためだと思う
       const { ulid } = await import('ulid')
       const scrap = {
         id: ulid(Date.now()),
