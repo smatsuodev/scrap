@@ -1,23 +1,37 @@
-import { fragmentsTable } from '@/db/schema'
+import * as schema from '@/db/schema'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
-import { drizzle } from 'drizzle-orm/d1'
+import { eq } from 'drizzle-orm'
+import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
+import { createMiddleware } from 'hono/factory'
 import { renderToString } from 'react-dom/server'
+import { ulid } from 'ulidx'
 import { z } from 'zod'
 
-interface D1Bindings {
-  DB: D1Database
+const drizzleMiddleware = createMiddleware(async (c, next) => {
+  c.set('db', drizzle(c.env.DB, { schema }))
+  await next()
+})
+
+type Env = {
+  Bindings: { DB: D1Database }
+  Variables: {
+    db: DrizzleD1Database<typeof schema> & { $client: D1Database }
+  }
 }
 
-const api = new Hono<{ Bindings: D1Bindings }>()
-  .get('/fragments', async (c) => {
-    const db = drizzle(c.env.DB)
-    const fragments = await db.select().from(fragmentsTable)
+const api = new Hono<Env>()
+  .get('/scraps/:id/fragments', drizzleMiddleware, async (c) => {
+    const scrapId = c.req.param('id')
+    const fragments = await c.var.db.query.fragments.findMany({
+      where: (fragments, { eq }) => eq(fragments.scrapId, scrapId),
+    })
     return c.json(fragments)
   })
   .post(
-    '/fragments',
+    '/scraps/:id/fragments',
+    drizzleMiddleware,
     zValidator(
       'json',
       z.object({
@@ -26,13 +40,63 @@ const api = new Hono<{ Bindings: D1Bindings }>()
     ),
     async (c) => {
       const { content } = c.req.valid('json')
-      const db = drizzle(c.env.DB)
-      await db.insert(fragmentsTable).values({ content }).execute()
-      return c.body(null, 201)
+      const fragment = {
+        scrapId: c.req.param('id'),
+        content,
+      }
+      await c.var.db.insert(schema.fragments).values(fragment)
+      return c.json(fragment, 201)
+    },
+  )
+  .get('/scraps/:id', drizzleMiddleware, async (c) => {
+    const scrapId = c.req.param('id')
+    const scrap = await c.var.db.query.scraps.findFirst({
+      where: (scraps, { eq }) => eq(scraps.id, scrapId),
+      with: {
+        fragments: true,
+      },
+    })
+    return c.json(scrap)
+  })
+  .post(
+    '/scraps',
+    drizzleMiddleware,
+    zValidator(
+      'json',
+      z.object({
+        title: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { title } = c.req.valid('json')
+      const scrap = {
+        id: ulid(),
+        title,
+      }
+      await c.var.db.insert(schema.scraps).values(scrap)
+      return c.json(scrap, 201)
+    },
+  )
+  .put(
+    '/scraps/:id',
+    drizzleMiddleware,
+    zValidator('json', z.object({ title: z.string() })),
+    async (c) => {
+      const { title } = c.req.valid('json')
+      const scrap = {
+        id: c.req.param('id'),
+        title,
+      }
+      await c.var.db
+        .update(schema.scraps)
+        .set(scrap)
+        .where(eq(schema.scraps.id, scrap.id))
+
+      return c.json(scrap)
     },
   )
 
-const app = new Hono().get('/', (c) => {
+const app = new Hono().route('/api', api).get('*', (c) => {
   return c.html(
     renderToString(
       <html lang='ja'>
@@ -54,8 +118,6 @@ const app = new Hono().get('/', (c) => {
     ),
   )
 })
-
-app.route('/api', api)
 
 export default app
 export type ApiType = typeof api

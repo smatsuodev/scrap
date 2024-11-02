@@ -1,8 +1,7 @@
 import type { FragmentInput } from '@/client/model/fragment'
-import { Button, Container, Group, Stack, Textarea, Title } from '@mantine/core'
+import { Button, Group, Stack, Textarea, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import { useCallback } from 'react'
 
 interface FragmentFormProps {
   onSubmit: (input: FragmentInput) => void
@@ -18,7 +17,7 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
     },
     validate: {
       content: (content) =>
-        content.length > 0 ? null : '1文字入力してください',
+        content.length > 0 ? null : '1文字以上入力してください',
     },
     onValuesChange: ({ content }) => {
       localStorage.setItem(LOCAL_STORAGE_KEY, content)
@@ -27,6 +26,7 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
   const handleSubmit = form.onSubmit(async (values) => {
     onSubmit(values)
     localStorage.removeItem(LOCAL_STORAGE_KEY)
+    form.setInitialValues({ content: '' })
     form.reset()
   })
 
