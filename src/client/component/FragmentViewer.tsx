@@ -26,7 +26,13 @@ export function FragmentViewer({ fragment }: FragmentViewerProps) {
           h4: (props: TitleProps) => <Title order={4} {...props} />,
           h5: (props: TitleProps) => <Title order={5} {...props} />,
           h6: (props: TitleProps) => <Title order={6} {...props} />,
-          ul: (props: ListProps) => <List listStyleType='disc' {...props} />,
+          ul: (props: ListProps) => (
+            <List
+              listStyleType='disc'
+              className='whitespace-normal'
+              {...props}
+            />
+          ),
           li: (props: ListItemProps) => <List.Item {...props} />,
           p: (props: TextProps) => <Text {...props} />,
         }}
