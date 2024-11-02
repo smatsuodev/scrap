@@ -4,6 +4,8 @@ import {
   List,
   type ListItemProps,
   type ListProps,
+  Text,
+  type TextProps,
   Title,
   type TitleProps,
 } from '@mantine/core'
@@ -26,6 +28,7 @@ export function FragmentViewer({ fragment }: FragmentViewerProps) {
           h6: (props: TitleProps) => <Title order={6} {...props} />,
           ul: (props: ListProps) => <List listStyleType='disc' {...props} />,
           li: (props: ListItemProps) => <List.Item {...props} />,
+          p: (props: TextProps) => <Text {...props} />,
         }}
       >
         {fragment.content}
