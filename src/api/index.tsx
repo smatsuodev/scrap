@@ -44,7 +44,7 @@ const api = new Hono<Env>()
         scrapId: c.req.param('id'),
         content,
       }
-      await c.var.db.insert(schema.fragments).values(fragment).execute()
+      await c.var.db.insert(schema.fragments).values(fragment)
       return c.json(fragment, 201)
     },
   )
@@ -73,7 +73,7 @@ const api = new Hono<Env>()
         id: ulid(),
         title,
       }
-      await c.var.db.insert(schema.scraps).values(scrap).execute()
+      await c.var.db.insert(schema.scraps).values(scrap)
       return c.json(scrap, 201)
     },
   )
@@ -91,7 +91,7 @@ const api = new Hono<Env>()
         .update(schema.scraps)
         .set(scrap)
         .where(eq(schema.scraps.id, scrap.id))
-        .execute()
+
       return c.json(scrap)
     },
   )
