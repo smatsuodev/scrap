@@ -103,9 +103,11 @@ const app = new Hono().route('/api', api).get('*', (c) => {
         <head>
           <meta charSet='utf-8' />
           <meta content='width=device-width, initial-scale=1' name='viewport' />
-          <link rel='stylesheet' href='/static/assets/index.css' />
           {import.meta.env.PROD ? (
-            <script type='module' src='/static/client.js' />
+            <>
+              <link rel='stylesheet' href='/static/assets/index.css' />
+              <script type='module' src='/static/client.js' />
+            </>
           ) : (
             <script type='module' src='/src/client/index.tsx' />
           )}
