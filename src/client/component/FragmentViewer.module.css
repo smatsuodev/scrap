@@ -1,6 +1,8 @@
-.markdownList {
-  margin-bottom: 1rem;
+.markdown {
   ul {
-    margin-bottom: 0;
+    margin-bottom: 1rem;
+    ul {
+      margin-bottom: 0;
+    }
   }
 }

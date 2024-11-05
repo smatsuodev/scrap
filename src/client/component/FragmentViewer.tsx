@@ -18,7 +18,7 @@ interface FragmentViewerProps {
 
 export function FragmentViewer({ fragment }: FragmentViewerProps) {
   return (
-    <Card withBorder>
+    <Card withBorder className={classes.markdown}>
       <Markdown
         components={{
           h1: (props: TitleProps) => <Title mb='1rem' order={1} {...props} />,
@@ -27,13 +27,7 @@ export function FragmentViewer({ fragment }: FragmentViewerProps) {
           h4: (props: TitleProps) => <Title mb='1rem' order={4} {...props} />,
           h5: (props: TitleProps) => <Title mb='1rem' order={5} {...props} />,
           h6: (props: TitleProps) => <Title mb='1rem' order={6} {...props} />,
-          ul: (props: ListProps) => (
-            <List
-              className={classes.markdownList}
-              listStyleType='disc'
-              {...props}
-            />
-          ),
+          ul: (props: ListProps) => <List listStyleType='disc' {...props} />,
           li: (props: ListItemProps) => <List.Item {...props} />,
           p: (props: TextProps) => <Text mb='1rem' {...props} />,
         }}
