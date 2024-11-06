@@ -1,7 +1,7 @@
 import { Button, Group, Stack, Title } from '@mantine/core'
+import type { FragmentInput } from '@/client/model/fragment'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import type { FragmentInput } from '@/client/model/fragment'
 import FragmentEditor from '@/client/component/FragmentEditor'
 
 interface FragmentFormProps {
@@ -25,7 +25,7 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
     },
     validate: {
       content: (content) =>
-        content.length > 0 ? null : '1文字入力してください',
+        content.length > 0 ? null : '1文字以上入力してください',
     },
     onValuesChange: ({ content }) => {
       localStorage.setItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT, content)
@@ -35,6 +35,7 @@ export function FragmentForm({ onSubmit }: FragmentFormProps) {
   const handleSubmit = form.onSubmit(async (values) => {
     onSubmit(values)
     localStorage.removeItem(LOCAL_STORAGE_KEY_NEW_FRAGMENT)
+    form.setInitialValues({ content: '' })
     form.reset()
   })
   const onKeyDown = getHotkeyHandler([['mod+Enter', handleSubmit]])
