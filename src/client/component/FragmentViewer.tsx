@@ -10,6 +10,7 @@ import {
   type TitleProps,
 } from '@mantine/core'
 import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import classes from './FragmentViewer.module.css'
 
 interface FragmentViewerProps {
@@ -20,6 +21,7 @@ export function FragmentViewer({ fragment }: FragmentViewerProps) {
   return (
     <Card withBorder className={classes.markdown}>
       <Markdown
+        remarkPlugins={[remarkGfm]}
         components={{
           h1: (props: TitleProps) => <Title order={1} {...props} />,
           h2: (props: TitleProps) => <Title order={2} {...props} />,
