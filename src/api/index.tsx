@@ -8,7 +8,6 @@ import { createMiddleware } from 'hono/factory'
 import { renderToString } from 'react-dom/server'
 import { ulid } from 'ulidx'
 import { z } from 'zod'
-import { eq } from "drizzle-orm"
 
 const drizzleMiddleware = createMiddleware(async (c, next) => {
   c.set('db', drizzle(c.env.DB, { schema }))
@@ -47,6 +46,35 @@ const api = new Hono<Env>()
       }
       await c.var.db.insert(schema.fragments).values(fragment)
       return c.json(fragment, 201)
+    },
+  )
+  .put(
+    '/scraps/:scrapId/fragments/:fragmentId',
+    zValidator(
+      'json',
+      // TODO: post と共通化したい
+      z.object({
+        content: z.string(),
+      }),
+    ),
+    zValidator(
+      'param',
+      z.object({
+        scrapId: z.string(),
+        fragmentId: z.string().transform(Number),
+      }),
+    ),
+    async (c) => {
+      const { fragmentId } = c.req.valid('param')
+      const { content } = c.req.valid('json')
+      const db = drizzle(c.env.DB)
+      await db
+        .update(schema.fragments)
+        .set({ content })
+        .where(eq(schema.fragments.id, fragmentId))
+
+      // TODO: 更新後の値を返す?
+      return c.body(null, 204)
     },
   )
   .get('/scraps/:id', drizzleMiddleware, async (c) => {
@@ -94,34 +122,6 @@ const api = new Hono<Env>()
         .where(eq(schema.scraps.id, scrap.id))
 
       return c.json(scrap)
-    },
-  )
-  .put(
-    '/fragments/:id',
-    zValidator(
-      'json',
-      // TODO: post と共通化したい
-      z.object({
-        content: z.string(),
-      }),
-    ),
-    zValidator(
-      'param',
-      z.object({
-        id: z.string().transform(Number),
-      }),
-    ),
-    async (c) => {
-      const { id } = c.req.valid('param')
-      const { content } = c.req.valid('json')
-      const db = drizzle(c.env.DB)
-      await db
-        .update(fragmentsTable)
-        .set({ content })
-        .where(eq(fragmentsTable.id, id))
-
-      // TODO: 更新後の値を返す?
-      return c.body(null, 204)
     },
   )
 

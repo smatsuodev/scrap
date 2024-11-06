@@ -75,16 +75,24 @@ export function ScrapViewer(props: ScrapViewerProps) {
   }, [titleForm])
 
   const updateFragment = async (id: number, content: string) => {
-    await client.fragments[':id'].$put({
-      param: { id: id.toString() },
+    await client.scraps[':scrapId'].fragments[':fragmentId'].$put({
+      param: {
+        scrapId: props.scrapId,
+        fragmentId: id.toString(),
+      },
       json: { content },
     })
 
-    setFragments((fragments) =>
-      fragments.map((fragment) =>
-        fragment.id === id ? { ...fragment, content } : fragment,
-      ),
-    )
+    // TODO: Immer で置き換えたいかも
+    setScrap((scrap) => {
+      if (!scrap) return scrap
+      return {
+        ...scrap,
+        fragments: scrap.fragments.map((fragment) =>
+          fragment.id === id ? { ...fragment, content } : fragment,
+        ),
+      }
+    })
   }
 
   useEffect(() => {
@@ -131,7 +139,7 @@ export function ScrapViewer(props: ScrapViewerProps) {
             </ActionIcon>
           </Group>
         )}
-        {fragments.map((fragment) => (
+        {scrap?.fragments.map((fragment) => (
           <FragmentViewer
             key={fragment.id}
             fragment={fragment}
