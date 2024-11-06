@@ -30,7 +30,13 @@ export function FragmentViewer({ fragment }: FragmentViewerProps) {
           h4: (props: TitleProps) => <Title order={4} {...props} />,
           h5: (props: TitleProps) => <Title order={5} {...props} />,
           h6: (props: TitleProps) => <Title order={6} {...props} />,
-          ul: (props: ListProps) => <List listStyleType='disc' {...props} />,
+          ul: (props: ListProps) => (
+            <List type='unordered' listStyleType='disc' {...props} />
+          ),
+          // ol要素のtypeとList要素のtypeが競合するため、ListPropsからtypeを除外
+          ol: (props: Omit<ListProps, 'type'>) => (
+            <List type='ordered' listStyleType='decimal' {...props} />
+          ),
           li: (props: ListItemProps) => <List.Item {...props} />,
           p: (props: TextProps) => <Text {...props} />,
         }}
