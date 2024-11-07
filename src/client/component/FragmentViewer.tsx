@@ -1,11 +1,26 @@
 import EditFragmentForm from '@/client/component/EditFragmentForm'
 import type { Fragment } from '@/client/model/fragment'
-import Markdown from 'react-markdown'
-import classes from './FragmentViewer.module.css'
-import { ActionIcon, Box, Card, Group, Stack, Text } from '@mantine/core'
+import {
+  ActionIcon,
+  Box,
+  Card,
+  Group,
+  List,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core'
+import type {
+  ListItemProps,
+  ListProps,
+  TextProps,
+  TitleProps,
+} from '@mantine/core'
 import { useHover } from '@mantine/hooks'
 import { IconPencil } from '@tabler/icons-react'
 import { useState } from 'react'
+import Markdown from 'react-markdown'
+import classes from './FragmentViewer.module.css'
 
 interface FragmentViewerProps {
   fragment: Fragment
@@ -30,6 +45,30 @@ function ToolBox(props: ToolBoxProps) {
         </ActionIcon>
       </Group>
     </Card>
+  )
+}
+
+type FragmentContentProps = {
+  fragment: Fragment
+}
+
+function FragmentContent(props: FragmentContentProps) {
+  return (
+    <Markdown
+      components={{
+        h1: (props: TitleProps) => <Title order={1} {...props} />,
+        h2: (props: TitleProps) => <Title order={2} {...props} />,
+        h3: (props: TitleProps) => <Title order={3} {...props} />,
+        h4: (props: TitleProps) => <Title order={4} {...props} />,
+        h5: (props: TitleProps) => <Title order={5} {...props} />,
+        h6: (props: TitleProps) => <Title order={6} {...props} />,
+        ul: (props: ListProps) => <List listStyleType='disc' {...props} />,
+        li: (props: ListItemProps) => <List.Item {...props} />,
+        p: (props: TextProps) => <Text {...props} />,
+      }}
+    >
+      {props.fragment.content}
+    </Markdown>
   )
 }
 
@@ -63,24 +102,9 @@ export function FragmentViewer({
             updateFragment={updateFragment}
           />
         ) : (
-          <Text>{fragment.content}</Text>
+          <FragmentContent fragment={fragment} />
         )}
-      {/*<Markdown*/}
-      {/*  components={{*/}
-      {/*    h1: (props: TitleProps) => <Title order={1} {...props} />,*/}
-      {/*    h2: (props: TitleProps) => <Title order={2} {...props} />,*/}
-      {/*    h3: (props: TitleProps) => <Title order={3} {...props} />,*/}
-      {/*    h4: (props: TitleProps) => <Title order={4} {...props} />,*/}
-      {/*    h5: (props: TitleProps) => <Title order={5} {...props} />,*/}
-      {/*    h6: (props: TitleProps) => <Title order={6} {...props} />,*/}
-      {/*    ul: (props: ListProps) => <List listStyleType='disc' {...props} />,*/}
-      {/*    li: (props: ListItemProps) => <List.Item {...props} />,*/}
-      {/*    p: (props: TextProps) => <Text {...props} />,*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  {fragment.content}*/}
-      {/*</Markdown>*/}
-    </Card>
+      </Card>
     </Stack>
   )
 }
