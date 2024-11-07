@@ -18,7 +18,7 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
       content: props.currentContent
     },
     validate: {
-      content: (content) => content.length > 0 ? null : '1文字入力してください'
+      content: (content) => content.length > 0 ? null : '1文字以上入力してください'
     }
   })
 
