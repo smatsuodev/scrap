@@ -31,7 +31,7 @@ function ToolBox(props: ToolBoxProps) {
   )
 }
 
-// TODO: Viewer に Edit が混ざっていてキモい
+// TODO: Viewer に Edit が混ざっていてキモい. 親で切り替えたほうがいい?
 export function FragmentViewer({
   fragment,
   updateFragment,
@@ -41,6 +41,10 @@ export function FragmentViewer({
 
   const showToolBox = hovered && !showEditor
 
+  /**
+   * NOTE: 内容の更新ボタンを押した後も hovered === true になるバグがある
+   * onMouseEnter, onMouseLeave で制御しても解決しなかった
+   */
   return (
     <Stack pos='relative' ref={ref}>
       {showToolBox && (
