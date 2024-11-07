@@ -18,7 +18,12 @@ function ToolBox(props: ToolBoxProps) {
   return (
     <Card p='2px' withBorder>
       <Group gap='4px' justify='center'>
-        <ActionIcon size='sm' variant='subtle' onClick={props.onClickEdit}>
+        <ActionIcon
+          size='sm'
+          variant='subtle'
+          onClick={props.onClickEdit}
+          color='var(--mantine-color-default-color)'
+        >
           <IconPencil />
         </ActionIcon>
       </Group>
