@@ -15,7 +15,7 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import { IconEdit } from '@tabler/icons-react'
+import { IconPencil } from '@tabler/icons-react'
 import { hc } from 'hono/client'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FragmentForm } from './FragmentForm'
@@ -135,7 +135,7 @@ export function ScrapViewer(props: ScrapViewerProps) {
               variant='default'
               onClick={handleEditTitleButtonClicked}
             >
-              <IconEdit />
+              <IconPencil />
             </ActionIcon>
           </Group>
         )}
