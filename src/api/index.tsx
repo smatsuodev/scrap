@@ -48,6 +48,35 @@ const api = new Hono<Env>()
       return c.json(fragment, 201)
     },
   )
+  .put(
+    '/scraps/:scrapId/fragments/:fragmentId',
+    zValidator(
+      'json',
+      // TODO: post と共通化したい
+      z.object({
+        content: z.string(),
+      }),
+    ),
+    zValidator(
+      'param',
+      z.object({
+        scrapId: z.string(),
+        fragmentId: z.string().transform(Number),
+      }),
+    ),
+    async (c) => {
+      const { fragmentId } = c.req.valid('param')
+      const { content } = c.req.valid('json')
+      const db = drizzle(c.env.DB)
+      await db
+        .update(schema.fragments)
+        .set({ content })
+        .where(eq(schema.fragments.id, fragmentId))
+
+      // TODO: 更新後の値を返す?
+      return c.body(null, 204)
+    },
+  )
   .get('/scraps/:id', drizzleMiddleware, async (c) => {
     const scrapId = c.req.param('id')
     const scrap = await c.var.db.query.scraps.findFirst({
