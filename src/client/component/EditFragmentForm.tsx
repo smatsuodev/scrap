@@ -3,7 +3,6 @@ import type { FragmentFormValues } from '@/client/component/FragmentForm'
 import { Button, Group } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import type { FormEvent } from 'react'
 
 export type EditFragmentFormProps = {
   currentContent: string
@@ -34,6 +33,9 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
       <form onSubmit={handleSubmit}>
         <FragmentEditor form={form} onKeyDown={onKeyDown} />
         <Group justify='flex-end' mt='md'>
+          <Button variant='default' onClick={props.closeEditor}>
+            キャンセル
+          </Button>
           <Button type='submit'>更新</Button>
         </Group>
       </form>
