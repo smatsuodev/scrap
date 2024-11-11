@@ -1,4 +1,5 @@
 import EditFragmentForm from '@/client/component/EditFragmentForm'
+import useEditFragmentDraft from '@/client/hook/useEditFragmentDraft'
 import type { Fragment } from '@/client/model/fragment'
 import {
   ActionIcon,
@@ -77,7 +78,9 @@ export function FragmentViewer({
   fragment,
   updateFragment,
 }: FragmentViewerProps) {
-  const [showEditor, setShowEditor] = useState(false)
+  const { getDraft } = useEditFragmentDraft(fragment.id)
+  // 空でない draft が存在したら、初めから editor を表示する
+  const [showEditor, setShowEditor] = useState(() => !!getDraft())
   const { hovered, ref } = useHover()
 
   const showToolBox = hovered && !showEditor
@@ -98,8 +101,8 @@ export function FragmentViewer({
         {showEditor ? (
           <EditFragmentForm
             closeEditor={() => setShowEditor(false)}
-            currentContent={fragment.content}
             updateFragment={updateFragment}
+            fragment={fragment}
           />
         ) : (
           <FragmentContent fragment={fragment} />
