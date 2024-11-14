@@ -70,7 +70,8 @@ function NodeRenderer({ nodes }: NodeRendererProps) {
   )
 }
 
-export async function parseMarkdown(markdownText: string): Promise<Root> {
+async function parseMarkdown(markdownText: string): Promise<Root> {
   const parser = remark().use(remarkGfm)
+  // 実際にRoot型のオブジェクトが返ってきているが、remark側で肩が上手く効いていないためキャストする
   return (await parser.run(parser.parse(markdownText))) as Root
 }
