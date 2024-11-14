@@ -1,5 +1,9 @@
+import type { Brand } from '@/common/brand'
+
+export type FragmentId = Brand<number, 'FragmentId'>
+
 export interface Fragment {
-  id: number
+  id: FragmentId
   content: string
 }
 
