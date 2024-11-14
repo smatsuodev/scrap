@@ -19,6 +19,7 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
 
   // TODO: FragmentForm と重複してるので、どうにかしたい
   const form = useForm<FragmentFormValues>({
+    mode: 'uncontrolled',
     initialValues: {
       /**
        * 空の draft は復元する意味がないので、元の content を表示
