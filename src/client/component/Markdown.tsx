@@ -29,7 +29,6 @@ type NodeRendererProps = {
 }
 
 function NodeRenderer({ nodes }: NodeRendererProps) {
-  console.log(nodes)
   return (
     <>
       {...nodes.map((node) => {
