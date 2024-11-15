@@ -33,40 +33,42 @@ type NodeRendererProps = {
 function NodeRenderer({ nodes }: NodeRendererProps) {
   return (
     <>
-      {...nodes.map((node) => {
-        switch (node.type) {
-          case 'text':
-            return node.value
+      {...nodes
+        .map((node) => {
+          switch (node.type) {
+            case 'text':
+              return node.value
 
-          case 'paragraph':
-            return (
-              <Text>
-                <NodeRenderer nodes={node.children} />
-              </Text>
-            )
+            case 'paragraph':
+              return (
+                <Text>
+                  <NodeRenderer nodes={node.children} />
+                </Text>
+              )
 
-          case 'heading':
-            return (
-              <Title order={node.depth}>
-                <NodeRenderer nodes={node.children} />
-              </Title>
-            )
+            case 'heading':
+              return (
+                <Title order={node.depth}>
+                  <NodeRenderer nodes={node.children} />
+                </Title>
+              )
 
-          case 'list':
-            return (
-              <List listStyleType='disc'>
-                <NodeRenderer nodes={node.children} />
-              </List>
-            )
+            case 'list':
+              return (
+                <List listStyleType='disc'>
+                  <NodeRenderer nodes={node.children} />
+                </List>
+              )
 
-          case 'listItem':
-            return (
-              <List.Item>
-                <NodeRenderer nodes={node.children} />
-              </List.Item>
-            )
-        }
-      })}
+            case 'listItem':
+              return (
+                <List.Item>
+                  <NodeRenderer nodes={node.children} />
+                </List.Item>
+              )
+          }
+        })
+        .filter((n) => n !== undefined)}
     </>
   )
 }
