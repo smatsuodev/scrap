@@ -15,13 +15,15 @@ export function Markdown({ markdown }: MarkdownProps) {
     parseMarkdown(markdown).then(setRootNode, console.error)
   }, [markdown])
 
-  return rootNode ? (
-    <NodeRenderer nodes={rootNode.children} />
-  ) : (
-    <Text c='gray' fs='italic'>
-      読み込みに失敗しました
-    </Text>
-  )
+  if (!rootNode) {
+    return (
+      <Text c='gray' fs='italic'>
+        読み込みに失敗しました
+      </Text>
+    )
+  }
+
+  return <NodeRenderer nodes={rootNode.children} />
 }
 
 type NodeRendererProps = {
