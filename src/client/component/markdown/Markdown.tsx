@@ -61,21 +61,22 @@ function NodeRenderer({ nodes }: NodeRendererProps) {
                 </List>
               )
 
-          case 'listItem':
-            return (
-              <List.Item>
-                <NodeRenderer nodes={node.children} />
-              </List.Item>
-            )
+            case 'listItem':
+              return (
+                <List.Item>
+                  <NodeRenderer nodes={node.children} />
+                </List.Item>
+              )
 
-          case 'inlineCode':
-            return <Code>{node.value}</Code>
+            case 'inlineCode':
+              return <Code>{node.value}</Code>
 
-          case 'code': {
-            return <RichCode lang={node.lang ?? ''} code={node.value} />
+            case 'code': {
+              return <RichCode lang={node.lang ?? ''} code={node.value} />
+            }
           }
-        }
-      }).filter((n) => n !== undefined)}
+        })
+        .filter((n) => n !== undefined)}
     </>
   )
 }
