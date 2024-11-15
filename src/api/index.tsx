@@ -1,4 +1,5 @@
 import * as schema from '@/db/schema'
+import type { FragmentId } from '@/model/fragment'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
 import { eq } from 'drizzle-orm'
@@ -61,7 +62,7 @@ const api = new Hono<Env>()
       'param',
       z.object({
         scrapId: z.string(),
-        fragmentId: z.string().transform(Number),
+        fragmentId: z.string().transform((v) => Number(v) as FragmentId),
       }),
     ),
     async (c) => {

@@ -1,8 +1,9 @@
+import type { FragmentId } from '@/model/fragment'
 import { relations } from 'drizzle-orm'
 import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export const fragments = sqliteTable('fragments', {
-  id: int().primaryKey({ autoIncrement: true }),
+  id: int().$type<FragmentId>().primaryKey({ autoIncrement: true }),
   content: text().notNull(),
   scrapId: text('scrap_id')
     .notNull()
