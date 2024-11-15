@@ -1,5 +1,5 @@
 import EditFragmentForm from '@/client/component/EditFragmentForm'
-import { Markdown } from '@/client/component/Markdown'
+import { Markdown } from '@/client/component/markdown/Markdown'
 import type { Fragment } from '@/client/model/fragment'
 import { ActionIcon, Box, Card, Group, Stack } from '@mantine/core'
 import { useHover } from '@mantine/hooks'
