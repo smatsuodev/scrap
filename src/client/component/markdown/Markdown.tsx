@@ -16,13 +16,15 @@ export function Markdown({ markdown }: MarkdownProps) {
     parseMarkdown(markdown).then(setRootNode, console.error)
   }, [markdown])
 
-  return rootNode ? (
-    <NodeRenderer nodes={rootNode.children} />
-  ) : (
-    <Text c='gray' fs='italic'>
-      読み込みに失敗しました
-    </Text>
-  )
+  if (!rootNode) {
+    return (
+      <Text c='gray' fs='italic'>
+        読み込みに失敗しました
+      </Text>
+    )
+  }
+
+  return <NodeRenderer nodes={rootNode.children} />
 }
 
 type NodeRendererProps = {
@@ -32,31 +34,32 @@ type NodeRendererProps = {
 function NodeRenderer({ nodes }: NodeRendererProps) {
   return (
     <>
-      {...nodes.map((node) => {
-        switch (node.type) {
-          case 'text':
-            return node.value
+      {...nodes
+        .map((node) => {
+          switch (node.type) {
+            case 'text':
+              return node.value
 
-          case 'paragraph':
-            return (
-              <Text>
-                <NodeRenderer nodes={node.children} />
-              </Text>
-            )
+            case 'paragraph':
+              return (
+                <Text>
+                  <NodeRenderer nodes={node.children} />
+                </Text>
+              )
 
-          case 'heading':
-            return (
-              <Title order={node.depth}>
-                <NodeRenderer nodes={node.children} />
-              </Title>
-            )
+            case 'heading':
+              return (
+                <Title order={node.depth}>
+                  <NodeRenderer nodes={node.children} />
+                </Title>
+              )
 
-          case 'list':
-            return (
-              <List listStyleType='disc'>
-                <NodeRenderer nodes={node.children} />
-              </List>
-            )
+            case 'list':
+              return (
+                <List listStyleType='disc'>
+                  <NodeRenderer nodes={node.children} />
+                </List>
+              )
 
           case 'listItem':
             return (
@@ -72,7 +75,7 @@ function NodeRenderer({ nodes }: NodeRendererProps) {
             return <RichCode lang={node.lang ?? ''} code={node.value} />
           }
         }
-      })}
+      }).filter((n) => n !== undefined)}
     </>
   )
 }
