@@ -1,6 +1,12 @@
 import EditFragmentForm from '@/client/component/EditFragmentForm'
 import useEditFragmentDraft from '@/client/hook/useEditFragmentDraft'
-import type { Fragment } from '@/client/model/fragment'
+import type { Fragment } from '@/model/fragment'
+import type {
+  ListItemProps,
+  ListProps,
+  TextProps,
+  TitleProps,
+} from '@mantine/core'
 import {
   ActionIcon,
   Box,
@@ -10,12 +16,6 @@ import {
   Stack,
   Text,
   Title,
-} from '@mantine/core'
-import type {
-  ListItemProps,
-  ListProps,
-  TextProps,
-  TitleProps,
 } from '@mantine/core'
 import { useHover } from '@mantine/hooks'
 import { IconPencil } from '@tabler/icons-react'
