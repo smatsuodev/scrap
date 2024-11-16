@@ -51,7 +51,6 @@ function RecentScrapList() {
   return (
     <Stack>
       {...scraps.map((scrap) => {
-        console.log(scrap)
         return (
           <>
             <UnstyledButton key={scrap.id}>
