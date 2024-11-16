@@ -1,5 +1,6 @@
 import { Code } from '@mantine/core'
-import { bundledLanguages, bundledThemes, createHighlighter } from 'shiki'
+import { useEffect, useState } from 'react'
+import { bundledLanguages, codeToHtml } from 'shiki'
 
 type CodeBlockProps = {
   code: string
@@ -8,17 +9,16 @@ type CodeBlockProps = {
 
 const supportedLanguageNames = Object.keys(bundledLanguages)
 
-const highlighter = await createHighlighter({
-  themes: Object.keys(bundledThemes),
-  langs: supportedLanguageNames,
-})
-
 export function RichCode({ code, lang }: CodeBlockProps) {
-  const html = highlighter.codeToHtml(code, {
-    lang: isLangSupported(lang) ? lang : 'plaintext',
-    theme: 'github-light',
-    structure: 'inline',
-  })
+  const [html, setHtml] = useState('')
+
+  useEffect(() => {
+    codeToHtml(code, {
+      lang: isLangSupported(lang) ? lang : 'plaintext',
+      theme: 'github-light',
+      structure: 'inline',
+    }).then(setHtml, console.error)
+  }, [code, lang])
 
   return (
     // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
