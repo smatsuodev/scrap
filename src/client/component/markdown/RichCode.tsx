@@ -40,21 +40,22 @@ export function RichCode({ code, lang }: CodeBlockProps) {
         style={{ zIndex: 5 }}
       >
         <CopyButton value={code} timeout={1500}>
-          {({ copied, copy }) => (
-            <Tooltip label={copied ? 'コピーされました' : 'コピー'} withArrow>
-              <ActionIcon
-                color={copied ? 'teal' : 'gray'}
-                variant='subtle'
-                onClick={copy}
-              >
-                {copied ? (
-                  <IconCheck style={{ width: rem(16) }} />
-                ) : (
-                  <IconCopy style={{ width: rem(16) }} />
-                )}
+          {({ copied, copy }) => {
+            if (copied) {
+              return (
+                <Tooltip label='コピーされました' closeDelay={1500} withArrow>
+                  <ActionIcon color='teal' variant='subtle' onClick={copy}>
+                    <IconCheck style={{ width: rem(16) }} />
+                  </ActionIcon>
+                </Tooltip>
+              )
+            }
+            return (
+              <ActionIcon color='gray' variant='subtle' onClick={copy}>
+                <IconCopy style={{ width: rem(16) }} />
               </ActionIcon>
-            </Tooltip>
-          )}
+            )
+          }}
         </CopyButton>
       </Box>
 
