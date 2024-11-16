@@ -2,7 +2,7 @@ import * as schema from '@/db/schema'
 import type { FragmentId } from '@/model/fragment'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
@@ -92,6 +92,7 @@ const api = new Hono<Env>()
     const scraps = await c.var.db.query.scraps.findMany({
       with: { fragments: true },
       limit: 30,
+      orderBy: [desc(schema.scraps.updatedAt)],
     })
     return c.json(scraps)
   })

@@ -8,8 +8,9 @@ import {
   Stack,
   Text,
   Title,
+  UnstyledButton,
 } from '@mantine/core'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import { hc } from 'hono/client'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -31,12 +32,13 @@ function IndexPage() {
 function RecentScrapList() {
   const client = useMemo(() => hc<ApiType>('/api'), [])
   const [scraps, setScraps] = useState<Scrap[] | null>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     client.scraps.$get().then(async (res) => {
       setScraps(await res.json())
     })
-  })
+  }, [client])
 
   if (scraps === null) {
     return (
@@ -48,17 +50,23 @@ function RecentScrapList() {
 
   return (
     <Stack>
-      {...scraps.map((scrap) => (
-        <>
-          <Stack key={scrap.id} my='xs'>
-            <Title order={3}>{scrap.title}</Title>
-            <Text c='dimmed' truncate='end'>
-              {scrap.fragments[0]?.content ?? ''}
-            </Text>
-          </Stack>
-          <Divider key={scrap.id} />
-        </>
-      ))}
+      {...scraps.map((scrap) => {
+        console.log(scrap)
+        return (
+          <>
+            <UnstyledButton key={scrap.id}>
+              <Stack
+                my='xs'
+                onClick={() => navigate({ to: `/scraps/${scrap.id}` })}
+              >
+                <Text c='dimmed'>{scrap.updatedAt}</Text>
+                <Title order={3}>{scrap.title}</Title>
+              </Stack>
+            </UnstyledButton>
+            <Divider key={`${scrap.id}-divider`} />
+          </>
+        )
+      })}
     </Stack>
   )
 }
