@@ -2,9 +2,44 @@ import FragmentEditor from '@/client/component/FragmentEditor'
 import type { FragmentFormValues } from '@/client/component/FragmentForm'
 import useEditFragmentDraft from '@/client/hook/useEditFragmentDraft'
 import type { Fragment } from '@/client/model/fragment'
-import { Button, Group } from '@mantine/core'
+import { Button, Group, Modal, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { getHotkeyHandler } from '@mantine/hooks'
+import { getHotkeyHandler, useDisclosure } from '@mantine/hooks'
+import { IconAlertTriangleFilled } from '@tabler/icons-react'
+
+function CancelModalTitle() {
+  return (
+    <>
+      <Group gap='xs'>
+        <IconAlertTriangleFilled color='var(--mantine-color-yellow-7)' />
+        <Text>警告</Text>
+      </Group>
+    </>
+  )
+}
+
+type EditCancelModalProps = {
+  modalOpened: boolean
+  closeModal: () => void
+  onConfirm: () => void
+}
+
+function CancelModal(props: EditCancelModalProps) {
+  return (
+    <Modal
+      opened={props.modalOpened}
+      onClose={props.closeModal}
+      title={<CancelModalTitle />}
+    >
+      <Text>保存していない変更が削除されます</Text>
+      <Group justify='flex-end' mt='sm'>
+        <Button variant='filled' color='red' onClick={props.onConfirm}>
+          削除
+        </Button>
+      </Group>
+    </Modal>
+  )
+}
 
 export type EditFragmentFormProps = {
   closeEditor: () => void
@@ -13,6 +48,8 @@ export type EditFragmentFormProps = {
 }
 
 export default function EditFragmentForm(props: EditFragmentFormProps) {
+  const [modalOpened, { toggle: toggleModal, close: closeModal }] =
+    useDisclosure(false)
   const { getDraft, saveDraft, removeDraft } = useEditFragmentDraft(
     props.fragment.id,
   )
@@ -44,10 +81,10 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
   })
   const onKeyDown = getHotkeyHandler([['mod+Enter', handleSubmit]])
 
-  // TODO: ダイアログを出す
-  const handleCancel = () => {
+  const handleConfirmDiscard = () => {
     removeDraft()
     props.closeEditor()
+    toggleModal()
   }
 
   return (
@@ -55,12 +92,18 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
       <form onSubmit={handleSubmit}>
         <FragmentEditor form={form} onKeyDown={onKeyDown} />
         <Group justify='flex-end' mt='md'>
-          <Button variant='default' onClick={handleCancel}>
+          <Button variant='default' onClick={toggleModal}>
             キャンセル
           </Button>
           <Button type='submit'>更新</Button>
         </Group>
       </form>
+
+      <CancelModal
+        modalOpened={modalOpened}
+        closeModal={closeModal}
+        onConfirm={handleConfirmDiscard}
+      />
     </>
   )
 }
