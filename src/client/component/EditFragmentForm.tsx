@@ -54,6 +54,9 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
     props.fragment.id,
   )
 
+  const draft = getDraft()
+  const draftExists = draft !== null
+
   // TODO: FragmentForm と重複してるので、どうにかしたい
   const form = useForm<FragmentFormValues>({
     mode: 'uncontrolled',
@@ -62,7 +65,7 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
        * 空の draft は復元する意味がないので、元の content を表示
        * ただし、実際は親コンポーネントの都合で editor は表示されない
        */
-      content: getDraft() || props.fragment.content,
+      content: draft || props.fragment.content,
     },
     validate: {
       content: (content) =>
@@ -81,6 +84,14 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
   })
   const onKeyDown = getHotkeyHandler([['mod+Enter', handleSubmit]])
 
+  const handleCancel = () => {
+    if (draftExists) {
+      toggleModal()
+    } else {
+      props.closeEditor()
+    }
+  }
+
   const handleConfirmDiscard = () => {
     removeDraft()
     props.closeEditor()
@@ -92,7 +103,7 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
       <form onSubmit={handleSubmit}>
         <FragmentEditor form={form} onKeyDown={onKeyDown} />
         <Group justify='flex-end' mt='md'>
-          <Button variant='default' onClick={toggleModal}>
+          <Button variant='default' onClick={handleCancel}>
             キャンセル
           </Button>
           <Button type='submit'>更新</Button>
