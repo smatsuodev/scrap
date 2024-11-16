@@ -6,6 +6,7 @@ import {
   Stack,
   Tooltip,
   rem,
+  useMantineTheme,
 } from '@mantine/core'
 import { IconCheck, IconCopy } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
@@ -41,23 +42,34 @@ export function RichCode({ code, lang }: CodeBlockProps) {
       >
         <CopyButton value={code} timeout={1500}>
           {({ copied, copy }) => {
+            const theme = useMantineTheme()
+
             if (copied) {
               return (
                 <Tooltip label='コピーされました' closeDelay={1500} withArrow>
-                  <ActionIcon color='teal' variant='subtle' onClick={copy}>
-                    <IconCheck style={{ width: rem(16) }} />
+                  <ActionIcon
+                    color='var(--code-bg, var(--mantine-color-gray-1))'
+                    variant='filled'
+                    onClick={copy}
+                  >
+                    <IconCheck
+                      color={theme.colors.teal[6]}
+                      style={{ width: rem(16) }}
+                    />
                   </ActionIcon>
                 </Tooltip>
               )
             }
             return (
-              <ActionIcon
-                color='var(--code-bg, var(--mantine-color-gray-1))'
-                variant='filled'
-                onClick={copy}
-              >
-                <IconCopy color='gray' style={{ width: rem(16) }} />
-              </ActionIcon>
+              <>
+                <ActionIcon
+                  color='var(--code-bg, var(--mantine-color-gray-1))'
+                  variant='filled'
+                  onClick={copy}
+                >
+                  <IconCopy color='gray' style={{ width: rem(16) }} />
+                </ActionIcon>
+              </>
             )
           }}
         </CopyButton>
