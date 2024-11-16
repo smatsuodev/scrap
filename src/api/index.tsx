@@ -88,6 +88,13 @@ const api = new Hono<Env>()
     })
     return c.json(scrap)
   })
+  .get('/scraps', drizzleMiddleware, async (c) => {
+    const scraps = await c.var.db.query.scraps.findMany({
+      with: { fragments: true },
+      limit: 30,
+    })
+    return c.json(scraps)
+  })
   .post(
     '/scraps',
     drizzleMiddleware,
