@@ -1,4 +1,5 @@
-import { List, Text, Title } from '@mantine/core'
+import { RichCode } from '@/client/component/markdown/RichCode'
+import { Code, List, Text, Title } from '@mantine/core'
 import type { Root, RootContent } from 'mdast'
 import { useEffect, useState } from 'react'
 import { remark } from 'remark'
@@ -66,6 +67,13 @@ function NodeRenderer({ nodes }: NodeRendererProps) {
                   <NodeRenderer nodes={node.children} />
                 </List.Item>
               )
+
+            case 'inlineCode':
+              return <Code>{node.value}</Code>
+
+            case 'code': {
+              return <RichCode lang={node.lang ?? ''} code={node.value} />
+            }
           }
         })
         .filter((n) => n !== undefined)}
