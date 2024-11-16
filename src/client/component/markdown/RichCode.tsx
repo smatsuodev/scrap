@@ -51,8 +51,12 @@ export function RichCode({ code, lang }: CodeBlockProps) {
               )
             }
             return (
-              <ActionIcon color='gray' variant='subtle' onClick={copy}>
-                <IconCopy style={{ width: rem(16) }} />
+              <ActionIcon
+                color='var(--code-bg, var(--mantine-color-gray-1))'
+                variant='filled'
+                onClick={copy}
+              >
+                <IconCopy color='gray' style={{ width: rem(16) }} />
               </ActionIcon>
             )
           }}
@@ -70,8 +74,6 @@ export function RichCode({ code, lang }: CodeBlockProps) {
     </Stack>
   )
 }
-
-function OverlayCopyButton({ value }: { value: string }) {}
 
 function isLangSupported(lang: string): lang is keyof typeof bundledLanguages {
   return supportedLanguageNames.includes(lang)
