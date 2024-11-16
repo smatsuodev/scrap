@@ -10,7 +10,8 @@
   h5,
   h6,
   ul,
-  p {
+  p,
+  pre {
     margin-bottom: 1rem;
   }
 
