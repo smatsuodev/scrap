@@ -1,7 +1,7 @@
 import type { ApiType } from '@/api'
 import { FragmentViewer } from '@/client/component/FragmentViewer'
-import type { FragmentInput } from '@/client/model/fragment'
-import type { Scrap } from '@/client/model/scrap'
+import type { FragmentInput } from '@/model/fragment'
+import type { Scrap } from '@/model/scrap'
 import {
   ActionIcon,
   Button,
@@ -15,7 +15,7 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
-import { IconEdit } from '@tabler/icons-react'
+import { IconPencil } from '@tabler/icons-react'
 import { hc } from 'hono/client'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FragmentForm } from './FragmentForm'
@@ -74,6 +74,27 @@ export function ScrapViewer(props: ScrapViewerProps) {
     titleForm.reset()
   }, [titleForm])
 
+  const updateFragment = async (id: number, content: string) => {
+    await client.scraps[':scrapId'].fragments[':fragmentId'].$put({
+      param: {
+        scrapId: props.scrapId,
+        fragmentId: id.toString(),
+      },
+      json: { content },
+    })
+
+    // TODO: Immer で置き換えたいかも
+    setScrap((scrap) => {
+      if (!scrap) return scrap
+      return {
+        ...scrap,
+        fragments: scrap.fragments.map((fragment) =>
+          fragment.id === id ? { ...fragment, content } : fragment,
+        ),
+      }
+    })
+  }
+
   useEffect(() => {
     fetchScrap().then(setScrap)
   }, [fetchScrap])
@@ -114,12 +135,18 @@ export function ScrapViewer(props: ScrapViewerProps) {
               variant='default'
               onClick={handleEditTitleButtonClicked}
             >
-              <IconEdit />
+              <IconPencil />
             </ActionIcon>
           </Group>
         )}
         {scrap?.fragments.map((fragment) => (
-          <FragmentViewer key={fragment.id} fragment={fragment} />
+          <FragmentViewer
+            key={fragment.id}
+            fragment={fragment}
+            updateFragment={(content: string) =>
+              updateFragment(fragment.id, content)
+            }
+          />
         ))}
       </Stack>
       <Divider my='lg' />

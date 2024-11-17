@@ -1,14 +1,11 @@
 import type { ApiType } from '@/api'
-import { Button } from '@mantine/core'
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
+import { ActionIcon, Tooltip } from '@mantine/core'
+import { IconPencilPlus } from '@tabler/icons-react'
+import { useNavigate } from '@tanstack/react-router'
 import { hc } from 'hono/client'
 import { useCallback, useMemo } from 'react'
 
-export const Route = createLazyFileRoute('/')({
-  component: IndexPage,
-})
-
-function IndexPage() {
+export function CreateScrapButton() {
   const client = useMemo(() => hc<ApiType>('/api'), [])
   const navigate = useNavigate()
 
@@ -21,8 +18,10 @@ function IndexPage() {
   }, [client, navigate])
 
   return (
-    <>
-      <Button onClick={handleClick}>新しいスクラップ</Button>
-    </>
+    <Tooltip label='新しいスクラップ'>
+      <ActionIcon size='lg' variant='default' onClick={handleClick}>
+        <IconPencilPlus />
+      </ActionIcon>
+    </Tooltip>
   )
 }

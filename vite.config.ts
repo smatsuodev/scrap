@@ -20,11 +20,14 @@ export default defineConfig(({ mode, command }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, './src'),
+          // アイコンごとにチャンクが生成されるバグの workaround
+          // refs: https://github.com/tabler/tabler-icons/issues/1233#issuecomment-2428245119
+          '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
         },
       },
       plugins: [
         TanStackRouterVite({
-          routesDirectory: 'src/client/routes',
+          routesDirectory: 'src/client/route',
           generatedRouteTree: 'src/client/routeTree.gen.ts',
         }),
       ],
@@ -43,7 +46,7 @@ export default defineConfig(({ mode, command }) => {
       ...(command === 'serve'
         ? [
             TanStackRouterVite({
-              routesDirectory: 'src/client/routes',
+              routesDirectory: 'src/client/route',
               generatedRouteTree: 'src/client/routeTree.gen.ts',
             }),
           ]
@@ -52,6 +55,7 @@ export default defineConfig(({ mode, command }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
       },
     },
   }
