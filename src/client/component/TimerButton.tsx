@@ -50,7 +50,7 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
   }, [countdownInterval, remainingSeconds])
   const handlePauseClicked = useCallback(() => {
     countdownInterval.stop()
-  }, [])
+  }, [countdownInterval])
 
   useEffect(() => {
     if (remainingSeconds === 0) {
