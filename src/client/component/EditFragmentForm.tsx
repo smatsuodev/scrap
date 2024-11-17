@@ -9,12 +9,10 @@ import { IconAlertTriangleFilled } from '@tabler/icons-react'
 
 function CancelModalTitle() {
   return (
-    <>
-      <Group gap='xs'>
-        <IconAlertTriangleFilled color='var(--mantine-color-yellow-7)' />
-        <Text>警告</Text>
-      </Group>
-    </>
+    <Group gap='xs'>
+      <IconAlertTriangleFilled color='var(--mantine-color-yellow-7)' />
+      <Text>警告</Text>
+    </Group>
   )
 }
 
