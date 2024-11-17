@@ -26,4 +26,3 @@ export const scraps = sqliteTable('scraps', {
 export const scrapsRelations = relations(scraps, ({ many }) => ({
   fragments: many(fragments),
 }))
-
