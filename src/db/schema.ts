@@ -27,15 +27,3 @@ export const scrapsRelations = relations(scraps, ({ many }) => ({
   fragments: many(fragments),
 }))
 
-/*
-PRAGMA foreign_keys=ON;--> statement-breakpoint
-CREATE TABLE `__new_scraps` (
-    `id` text PRIMARY KEY NOT NULL,
-    `title` text NOT NULL,
-    `updated_at` integer DEFAULT (CURRENT_TIMESTAMP) NOT NULL
-);
---> statement-breakpoint
-INSERT INTO `__new_scraps`("id", "title") SELECT "id", "title" FROM `scraps`;--> statement-breakpoint
-DROP TABLE `scraps`;--> statement-breakpoint
-ALTER TABLE `__new_scraps` RENAME TO `scraps`;
-*/
