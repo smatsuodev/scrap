@@ -1,7 +1,7 @@
 import EditFragmentForm from '@/client/component/EditFragmentForm'
 import { Markdown } from '@/client/component/markdown/Markdown'
 import useEditFragmentDraft from '@/client/hook/useEditFragmentDraft'
-import type { Fragment } from '@/client/model/fragment'
+import type { Fragment } from '@/model/fragment'
 import { ActionIcon, Box, Card, Group, Stack } from '@mantine/core'
 import { useHover } from '@mantine/hooks'
 import { IconPencil } from '@tabler/icons-react'

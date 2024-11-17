@@ -17,7 +17,7 @@ compatibility_flags = [ "nodejs_compat" ]
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
 database_name = "scrap"
-database_id = "5d6d6184-0355-4a37-b636-882d2681498b"
+database_id = "5c11a0e5-3460-480c-bb5c-0971dd645f47"
 migrations_dir = "drizzle"
 
 # [ai]

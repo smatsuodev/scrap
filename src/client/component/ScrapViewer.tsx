@@ -1,7 +1,7 @@
 import type { ApiType } from '@/api'
 import { FragmentViewer } from '@/client/component/FragmentViewer'
-import type { FragmentInput } from '@/client/model/fragment'
-import type { Scrap } from '@/client/model/scrap'
+import type { FragmentInput } from '@/model/fragment'
+import type { Scrap } from '@/model/scrap'
 import {
   ActionIcon,
   Button,

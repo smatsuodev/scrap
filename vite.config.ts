@@ -27,7 +27,7 @@ export default defineConfig(({ mode, command }) => {
       },
       plugins: [
         TanStackRouterVite({
-          routesDirectory: 'src/client/routes',
+          routesDirectory: 'src/client/route',
           generatedRouteTree: 'src/client/routeTree.gen.ts',
         }),
       ],
@@ -46,7 +46,7 @@ export default defineConfig(({ mode, command }) => {
       ...(command === 'serve'
         ? [
             TanStackRouterVite({
-              routesDirectory: 'src/client/routes',
+              routesDirectory: 'src/client/route',
               generatedRouteTree: 'src/client/routeTree.gen.ts',
             }),
           ]

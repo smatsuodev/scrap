@@ -1,5 +1,5 @@
 import FragmentEditor from '@/client/component/FragmentEditor'
-import type { FragmentInput } from '@/client/model/fragment'
+import type { FragmentInput } from '@/model/fragment'
 import { Button, Group, Stack, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
