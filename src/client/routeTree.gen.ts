@@ -12,7 +12,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
+import { Route as rootRoute } from './route/__root'
 
 // Create Virtual Routes
 
@@ -25,14 +25,14 @@ const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./route/index.lazy').then((d) => d.Route))
 
 const ScrapsScrapIdLazyRoute = ScrapsScrapIdLazyImport.update({
   id: '/scraps/$scrapId',
   path: '/scraps/$scrapId',
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
-  import('./routes/scraps/$scrapId.lazy').then((d) => d.Route),
+  import('./route/scraps/$scrapId.lazy').then((d) => d.Route),
 )
 
 // Populate the FileRoutesByPath interface
