@@ -1,4 +1,3 @@
-import './tailwind.css'
 import '@mantine/core/styles.css'
 import { routeTree } from '@/client/routeTree.gen'
 import { MantineProvider, createTheme } from '@mantine/core'
