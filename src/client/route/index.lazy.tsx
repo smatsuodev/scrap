@@ -53,11 +53,11 @@ function RecentScrapList() {
       {...scraps.map((scrap) => {
         return (
           <>
-            <UnstyledButton key={scrap.id}>
-              <Stack
-                my='xs'
-                onClick={() => navigate({ to: `/scraps/${scrap.id}` })}
-              >
+            <UnstyledButton
+              key={scrap.id}
+              onClick={() => navigate({ to: `/scraps/${scrap.id}` })}
+            >
+              <Stack my='8px' gap='8px'>
                 <Text c='dimmed'>{scrap.updatedAt}</Text>
                 <Title order={3}>{scrap.title}</Title>
               </Stack>
