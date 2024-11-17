@@ -57,7 +57,7 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
       countdownInterval.stop()
       setRemainingSeconds(initialSeconds)
     }
-  }, [remainingSeconds, countdownInterval])
+  }, [remainingSeconds, countdownInterval, initialSeconds])
 
   const handleInputChanged = useCallback<
     Exclude<TimeInputProps['onChange'], undefined>
