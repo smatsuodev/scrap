@@ -62,7 +62,7 @@ const api = new Hono<Env>()
       'param',
       z.object({
         scrapId: z.string(),
-        fragmentId: z.string().transform((v) => Number(v) as FragmentId),
+        fragmentId: z.coerce.number().transform((v) => v as FragmentId),
       }),
     ),
     async (c) => {
