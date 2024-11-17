@@ -46,7 +46,7 @@ export type EditFragmentFormProps = {
 }
 
 export default function EditFragmentForm(props: EditFragmentFormProps) {
-  const [modalOpened, { toggle: toggleModal, close: closeModal }] =
+  const [modalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false)
   const { getDraft, saveDraft, removeDraft } = useEditFragmentDraft(
     props.fragment.id,
@@ -82,7 +82,7 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
   const handleCancel = () => {
     const draftExists = getDraft() !== null
     if (draftExists) {
-      toggleModal()
+      openModal()
     } else {
       props.closeEditor()
     }
@@ -91,7 +91,7 @@ export default function EditFragmentForm(props: EditFragmentFormProps) {
   const handleConfirmDiscard = () => {
     removeDraft()
     props.closeEditor()
-    toggleModal()
+    closeModal()
   }
 
   return (
