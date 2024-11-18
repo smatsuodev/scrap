@@ -54,12 +54,13 @@ function NodeRenderer({ nodes }: NodeRendererProps) {
                 </Title>
               )
 
-            case 'list':
+            case 'list': {
               return (
-                <List listStyleType='disc'>
+                <List type={node.ordered ? 'ordered' : 'unordered'}>
                   <NodeRenderer nodes={node.children} />
                 </List>
               )
+            }
 
             case 'listItem':
               return (
