@@ -40,24 +40,21 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
   const [initialSeconds, setInitialSeconds] = useState(0)
   const [remainingSeconds, setRemainingSeconds] = useState(0)
 
-  const countdownInterval = useInterval(
-    () => setRemainingSeconds((s) => s - 1),
-    1000,
-  )
+  const countdown = useInterval(() => setRemainingSeconds((s) => s - 1), 1000)
   const handlePlayClicked = useCallback(() => {
     setInitialSeconds(remainingSeconds)
-    countdownInterval.start()
-  }, [countdownInterval, remainingSeconds])
+    countdown.start()
+  }, [countdown, remainingSeconds])
   const handlePauseClicked = useCallback(() => {
-    countdownInterval.stop()
-  }, [countdownInterval])
+    countdown.stop()
+  }, [countdown])
 
   useEffect(() => {
     if (remainingSeconds === 0) {
-      countdownInterval.stop()
+      countdown.stop()
       setRemainingSeconds(initialSeconds)
     }
-  }, [remainingSeconds, countdownInterval, initialSeconds])
+  }, [remainingSeconds, countdown, initialSeconds])
 
   const handleInputChanged = useCallback<
     Exclude<TimeInputProps['onChange'], undefined>
@@ -82,18 +79,16 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
             value={toTimeString(remainingSeconds)}
             withSeconds
           />
-          <Tooltip label={countdownInterval.active ? '一時停止' : '開始'}>
+          <Tooltip label={countdown.active ? '一時停止' : '開始'}>
             <ActionIcon
               size='md'
               variant='subtle'
-              color={countdownInterval.active ? 'red' : 'teal'}
+              color={countdown.active ? 'red' : 'teal'}
               onClick={
-                countdownInterval.active
-                  ? handlePauseClicked
-                  : handlePlayClicked
+                countdown.active ? handlePauseClicked : handlePlayClicked
               }
             >
-              {countdownInterval.active ? (
+              {countdown.active ? (
                 <IconPlayerPauseFilled />
               ) : (
                 <IconPlayerPlayFilled />
