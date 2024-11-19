@@ -42,15 +42,14 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
 
   const countdown = useInterval(() => setRemainingSeconds((s) => s - 1), 1000)
   const handlePlayClicked = useCallback(() => {
-    setInitialSeconds(remainingSeconds)
     countdown.start()
-  }, [countdown, remainingSeconds])
+  }, [countdown])
   const handlePauseClicked = useCallback(() => {
     countdown.stop()
   }, [countdown])
 
   useEffect(() => {
-    if (remainingSeconds === 0) {
+    if (countdown.active && remainingSeconds === 0) {
       countdown.stop()
       setRemainingSeconds(initialSeconds)
     }
@@ -61,6 +60,7 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
   >((e) => {
     const seconds = toSeconds(e.currentTarget.value)
     if (seconds !== null) {
+      setInitialSeconds(seconds)
       setRemainingSeconds(seconds)
     }
   }, [])
