@@ -1,28 +1,17 @@
+import type { AppEnv } from '@/api/env'
+import { drizzleMiddleware } from '@/api/middleware/drizzle'
 import * as schema from '@/db/schema'
 import type { FragmentId } from '@/model/fragment'
 import { zValidator } from '@hono/zod-validator'
 import { ColorSchemeScript } from '@mantine/core'
 import { desc, eq } from 'drizzle-orm'
-import { type DrizzleD1Database, drizzle } from 'drizzle-orm/d1'
+import { drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
-import { createMiddleware } from 'hono/factory'
 import { renderToString } from 'react-dom/server'
 import { ulid } from 'ulidx'
 import { z } from 'zod'
 
-const drizzleMiddleware = createMiddleware(async (c, next) => {
-  c.set('db', drizzle(c.env.DB, { schema }))
-  await next()
-})
-
-type Env = {
-  Bindings: { DB: D1Database }
-  Variables: {
-    db: DrizzleD1Database<typeof schema> & { $client: D1Database }
-  }
-}
-
-const api = new Hono<Env>()
+const api = new Hono<AppEnv>()
   .get('/scraps/:id/fragments', drizzleMiddleware, async (c) => {
     const scrapId = c.req.param('id')
     const fragments = await c.var.db.query.fragments.findMany({
