@@ -1,18 +1,20 @@
-import type { AppEnv } from '@/api/env'
-import { drizzleMiddleware } from '@/api/middleware/drizzle'
 import * as schema from '@/db/schema'
 import type { FragmentId } from '@/model/fragment'
 import { zValidator } from '@hono/zod-validator'
-import { ColorSchemeScript } from '@mantine/core'
 import { desc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
-import { renderToString } from 'react-dom/server'
 import { ulid } from 'ulidx'
 import { z } from 'zod'
+import type { AppEnv } from './env'
+import { drizzleMiddleware } from './middleware/drizzle'
 
 const api = new Hono<AppEnv>()
-  .get('/scraps/:id/fragments', drizzleMiddleware, async (c) => {
+
+api.use(drizzleMiddleware)
+
+const routes = api
+  .get('/scraps/:id/fragments', async (c) => {
     const scrapId = c.req.param('id')
     const fragments = await c.var.db.query.fragments.findMany({
       where: (fragments, { eq }) => eq(fragments.scrapId, scrapId),
@@ -21,7 +23,6 @@ const api = new Hono<AppEnv>()
   })
   .post(
     '/scraps/:id/fragments',
-    drizzleMiddleware,
     zValidator(
       'json',
       z.object({
@@ -67,7 +68,7 @@ const api = new Hono<AppEnv>()
       return c.body(null, 204)
     },
   )
-  .get('/scraps/:id', drizzleMiddleware, async (c) => {
+  .get('/scraps/:id', async (c) => {
     const scrapId = c.req.param('id')
     const scrap = await c.var.db.query.scraps.findFirst({
       where: (scraps, { eq }) => eq(scraps.id, scrapId),
@@ -77,7 +78,7 @@ const api = new Hono<AppEnv>()
     })
     return c.json(scrap)
   })
-  .get('/scraps', drizzleMiddleware, async (c) => {
+  .get('/scraps', async (c) => {
     const scraps = await c.var.db.query.scraps.findMany({
       with: { fragments: true },
       limit: 30,
@@ -87,7 +88,6 @@ const api = new Hono<AppEnv>()
   })
   .post(
     '/scraps',
-    drizzleMiddleware,
     zValidator(
       'json',
       z.object({
@@ -106,7 +106,6 @@ const api = new Hono<AppEnv>()
   )
   .put(
     '/scraps/:id',
-    drizzleMiddleware,
     zValidator('json', z.object({ title: z.string() })),
     async (c) => {
       const { title } = c.req.valid('json')
@@ -123,30 +122,5 @@ const api = new Hono<AppEnv>()
     },
   )
 
-const app = new Hono().route('/api', api).get('*', (c) => {
-  return c.html(
-    renderToString(
-      <html lang='ja'>
-        <head>
-          <meta charSet='utf-8' />
-          <meta content='width=device-width, initial-scale=1' name='viewport' />
-          {import.meta.env.PROD ? (
-            <>
-              <link rel='stylesheet' href='/static/assets/index.css' />
-              <script type='module' src='/static/client.js' />
-            </>
-          ) : (
-            <script type='module' src='/src/client/index.tsx' />
-          )}
-          <ColorSchemeScript />
-        </head>
-        <body>
-          <div id='root' />
-        </body>
-      </html>,
-    ),
-  )
-})
-
-export default app
-export type ApiType = typeof api
+export type ApiType = typeof routes
+export default api

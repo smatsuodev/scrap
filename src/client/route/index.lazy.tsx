@@ -1,5 +1,5 @@
-import type { ApiType } from '@/api'
 import type { Scrap } from '@/model/scrap'
+import type { ApiType } from '@/server/api'
 import {
   Center,
   Container,

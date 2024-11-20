@@ -1,4 +1,4 @@
-import type { ApiType } from '@/api'
+import type { ApiType } from '@/server/api'
 import { ActionIcon, Tooltip } from '@mantine/core'
 import { IconPencilPlus } from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
