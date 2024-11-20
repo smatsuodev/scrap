@@ -1,19 +1,20 @@
 import * as schema from '@/db/schema'
 import type { FragmentId } from '@/model/fragment'
 import { zValidator } from '@hono/zod-validator'
-import { desc, eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { Hono } from 'hono'
-import { ulid } from 'ulidx'
 import { z } from 'zod'
 import type { AppEnv } from './env'
 import { drizzleMiddleware } from './middleware/drizzle'
+import scraps from './scraps'
 
 const api = new Hono<AppEnv>()
 
 api.use(drizzleMiddleware)
 
 const routes = api
+  .route('/scraps', scraps)
   .get('/scraps/:id/fragments', async (c) => {
     const scrapId = c.req.param('id')
     const fragments = await c.var.db.query.fragments.findMany({
@@ -66,59 +67,6 @@ const routes = api
 
       // TODO: 更新後の値を返す?
       return c.body(null, 204)
-    },
-  )
-  .get('/scraps/:id', async (c) => {
-    const scrapId = c.req.param('id')
-    const scrap = await c.var.db.query.scraps.findFirst({
-      where: (scraps, { eq }) => eq(scraps.id, scrapId),
-      with: {
-        fragments: true,
-      },
-    })
-    return c.json(scrap)
-  })
-  .get('/scraps', async (c) => {
-    const scraps = await c.var.db.query.scraps.findMany({
-      with: { fragments: true },
-      limit: 30,
-      orderBy: [desc(schema.scraps.updatedAt)],
-    })
-    return c.json(scraps)
-  })
-  .post(
-    '/scraps',
-    zValidator(
-      'json',
-      z.object({
-        title: z.string(),
-      }),
-    ),
-    async (c) => {
-      const { title } = c.req.valid('json')
-      const scrap = {
-        id: ulid(),
-        title,
-      }
-      await c.var.db.insert(schema.scraps).values(scrap)
-      return c.json(scrap, 201)
-    },
-  )
-  .put(
-    '/scraps/:id',
-    zValidator('json', z.object({ title: z.string() })),
-    async (c) => {
-      const { title } = c.req.valid('json')
-      const scrap = {
-        id: c.req.param('id'),
-        title,
-      }
-      await c.var.db
-        .update(schema.scraps)
-        .set(scrap)
-        .where(eq(schema.scraps.id, scrap.id))
-
-      return c.json(scrap)
     },
   )
 
