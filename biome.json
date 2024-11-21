@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist", ".wrangler", "drizzle", "*.gen.ts"]
+    "ignore": ["dist", ".wrangler", "drizzle", "*.gen.ts", "src/server/types"]
   },
   "formatter": {
     "enabled": true,
