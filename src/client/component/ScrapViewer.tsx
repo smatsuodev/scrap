@@ -37,8 +37,8 @@ export function ScrapViewer(props: ScrapViewerProps) {
   }, [client, props.scrapId])
 
   const handleSubmitFragment = async (input: FragmentInput) => {
-    await client.scraps[':id'].fragments.$post({
-      param: { id: props.scrapId },
+    await client.scraps[':scrapId'].fragments.$post({
+      param: { scrapId: props.scrapId },
       json: input,
     })
     setScrap(await fetchScrap())
@@ -74,9 +74,8 @@ export function ScrapViewer(props: ScrapViewerProps) {
   }, [titleForm])
 
   const updateFragment = async (id: number, content: string) => {
-    await client.scraps[':scrapId'].fragments[':fragmentId'].$put({
+    await client.fragments[':fragmentId'].$put({
       param: {
-        scrapId: props.scrapId,
         fragmentId: id.toString(),
       },
       json: { content },

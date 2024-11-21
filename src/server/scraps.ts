@@ -7,6 +7,7 @@ import { ulid } from 'ulidx'
 import { z } from 'zod'
 
 const scraps = new Hono<AppEnv>()
+  .basePath('/scraps')
   .get('/', async (c) => {
     const scraps = await c.var.db.query.scraps.findMany({
       with: { fragments: true },

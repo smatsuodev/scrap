@@ -1,11 +1,7 @@
-import * as schema from '@/db/schema'
-import type { FragmentId } from '@/model/fragment'
-import { zValidator } from '@hono/zod-validator'
-import { eq } from 'drizzle-orm'
-import { drizzle } from 'drizzle-orm/d1'
+import scrapFragments from '@/server/scrapFragments'
 import { Hono } from 'hono'
-import { z } from 'zod'
 import type { AppEnv } from './env'
+import fragments from './fragments'
 import { drizzleMiddleware } from './middleware/drizzle'
 import scraps from './scraps'
 
@@ -13,62 +9,22 @@ const api = new Hono<AppEnv>()
 
 api.use(drizzleMiddleware)
 
+/**
+ * scraps などは /scraps などの basePath が指定されているので、/ に連結する
+ * 以下の理由で basePath を事前に設定している
+ * - /foo/:scrapId のような不適切なルーティングを防ぐため
+ *   (`.route('/foo', scraps)` のようにして作れてしまう)
+ * - /scraps/:scrapId/fragments のようなネストしたリソースのコードの分割が自然になる
+ *
+ * 一方、`api` には以下の理由で /api の basePath を設定していない
+ * - /api/v1/ のようなルートを作れなくなる。basePath がなければ `.route('/api/v1', api)` と書ける。
+ *   (`.basePath('/v1')` のように設定するのは全然あり)
+ * - `hc` で参照する際に `client.api.scraps` のように書くのが手間
+ */
 const routes = api
-  .route('/scraps', scraps)
-  .get('/scraps/:id/fragments', async (c) => {
-    const scrapId = c.req.param('id')
-    const fragments = await c.var.db.query.fragments.findMany({
-      where: (fragments, { eq }) => eq(fragments.scrapId, scrapId),
-    })
-    return c.json(fragments)
-  })
-  .post(
-    '/scraps/:id/fragments',
-    zValidator(
-      'json',
-      z.object({
-        content: z.string(),
-      }),
-    ),
-    async (c) => {
-      const { content } = c.req.valid('json')
-      const fragment = {
-        scrapId: c.req.param('id'),
-        content,
-      }
-      await c.var.db.insert(schema.fragments).values(fragment)
-      return c.json(fragment, 201)
-    },
-  )
-  .put(
-    '/scraps/:scrapId/fragments/:fragmentId',
-    zValidator(
-      'json',
-      // TODO: post と共通化したい
-      z.object({
-        content: z.string(),
-      }),
-    ),
-    zValidator(
-      'param',
-      z.object({
-        scrapId: z.string(),
-        fragmentId: z.coerce.number().transform((v) => v as FragmentId),
-      }),
-    ),
-    async (c) => {
-      const { fragmentId } = c.req.valid('param')
-      const { content } = c.req.valid('json')
-      const db = drizzle(c.env.DB)
-      await db
-        .update(schema.fragments)
-        .set({ content })
-        .where(eq(schema.fragments.id, fragmentId))
-
-      // TODO: 更新後の値を返す?
-      return c.body(null, 204)
-    },
-  )
+  .route('/', scraps)
+  .route('/', fragments)
+  .route('/', scrapFragments)
 
 export type ApiType = typeof routes
 export default api
