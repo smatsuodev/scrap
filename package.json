@@ -48,6 +48,7 @@
     "@hono/vite-dev-server": "^0.15.1",
     "@tanstack/router-devtools": "^1.77.5",
     "@tanstack/router-plugin": "^1.76.4",
+    "@tsconfig/strictest": "^2.0.5",
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.7.7",
     "@types/react": "^18.3.11",

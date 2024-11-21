@@ -1,9 +1,9 @@
 {
+  "extends": ["@tsconfig/strictest"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "strict": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["@cloudflare/workers-types", "vite/client"],
     "jsx": "react-jsx",
@@ -12,7 +12,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "skipLibCheck": true,
-    "noUncheckedIndexedAccess": true
+    "checkJs": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": false
   }
 }
