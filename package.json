@@ -12,7 +12,8 @@
     "migrate:remote": "drizzle-kit generate && wrangler d1 migrations apply scrap --remote ",
     "lint": "biome check",
     "lint:fix": "biome check --fix",
-    "watch:server-types": "tsc -b -w ./src/server"
+    "watch:server-types": "tsc -b -w ./src/server",
+    "typecheck": "tsc -b"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.1",
