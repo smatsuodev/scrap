@@ -1,9 +1,9 @@
-import scrapFragments from '@/server/scrapFragments'
+import scrapFragments from '@/server/routes/scrapFragments'
 import { Hono } from 'hono'
 import type { AppEnv } from './env'
-import fragments from './fragments'
 import { drizzleMiddleware } from './middleware/drizzle'
-import scraps from './scraps'
+import fragments from './routes/fragments'
+import scraps from './routes/scraps'
 
 const api = new Hono<AppEnv>()
 
@@ -17,7 +17,7 @@ api.use(drizzleMiddleware)
  * - /scraps/:scrapId/fragments のようなネストしたリソースのコードの分割が自然になる
  *
  * 一方、`api` には以下の理由で /api の basePath を設定していない
- * - /api/v1/ のようなルートを作れなくなる。basePath がなければ `.route('/api/v1', api)` と書ける。
+ * - /api/v1/ のようなルートを作れなくなる
  *   (`.basePath('/v1')` のように設定するのは全然あり)
  * - `hc` で参照する際に `client.api.scraps` のように書くのが手間
  */
