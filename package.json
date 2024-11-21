@@ -2,7 +2,7 @@
   "name": "scrap",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "concurrently -r -k yarn:watch:server-types vite",
     "build": "$npm_execpath run build:client && $npm_execpath run build:api",
     "build:client": "vite build --mode client",
     "build:api": "vite build",
@@ -11,7 +11,8 @@
     "migrate": "drizzle-kit generate && wrangler d1 migrations apply scrap",
     "migrate:remote": "drizzle-kit generate && wrangler d1 migrations apply scrap --remote ",
     "lint": "biome check",
-    "lint:fix": "biome check --fix"
+    "lint:fix": "biome check --fix",
+    "watch:server-types": "tsc -b -w ./src/server"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.1",
@@ -52,10 +53,12 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
     "drizzle-kit": "^0.26.2",
     "postcss": "^8.4.47",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5.6.3",
     "vite": "^5.2.12",
     "wrangler": "^3.57.2"
   },
