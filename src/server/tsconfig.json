@@ -1,0 +1,12 @@
+{
+  "extends": ["../../tsconfig.base.json"],
+  "include": ["**/*", "../common/**/*", "../db/**/*", "../model/**/*"],
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./build/types",
+    "rootDir": "../"
+  }
+}
