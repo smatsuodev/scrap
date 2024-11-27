@@ -37,11 +37,11 @@ export default defineConfig(({ mode, command }) => {
   return {
     plugins: [
       build({
-        entry: 'src/api/index.tsx',
+        entry: 'src/server/index.tsx',
       }),
       devServer({
         adapter,
-        entry: 'src/api/index.tsx',
+        entry: 'src/server/index.tsx',
       }),
       ...(command === 'serve'
         ? [

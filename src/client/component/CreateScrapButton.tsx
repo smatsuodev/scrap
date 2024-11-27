@@ -1,12 +1,11 @@
-import type { ApiType } from '@/api'
+import { hcWithType } from '@/server/client'
 import { ActionIcon, Tooltip } from '@mantine/core'
 import { IconPencilPlus } from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
-import { hc } from 'hono/client'
 import { useCallback, useMemo } from 'react'
 
 export function CreateScrapButton() {
-  const client = useMemo(() => hc<ApiType>('/api'), [])
+  const client = useMemo(() => hcWithType('/api'), [])
   const navigate = useNavigate()
 
   const handleClick = useCallback(async () => {
