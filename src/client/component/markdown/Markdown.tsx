@@ -75,6 +75,9 @@ function NodeRenderer({ nodes }: NodeRendererProps) {
             case 'code': {
               return <RichCode lang={node.lang ?? ''} code={node.value} />
             }
+
+            default:
+              return undefined
           }
         })
         .filter((n) => n !== undefined)}

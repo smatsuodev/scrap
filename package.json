@@ -12,7 +12,8 @@
     "migrate:remote": "drizzle-kit generate && wrangler d1 migrations apply scrap --remote ",
     "lint": "biome check",
     "lint:fix": "biome check --fix",
-    "watch:server-types": "tsc -b -w ./src/server"
+    "watch:server-types": "tsc -b -w ./src/server",
+    "typecheck": "tsc -b"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.1",
@@ -48,6 +49,7 @@
     "@hono/vite-dev-server": "^0.15.1",
     "@tanstack/router-devtools": "^1.77.5",
     "@tanstack/router-plugin": "^1.76.4",
+    "@tsconfig/strictest": "^2.0.5",
     "@types/mdast": "^4.0.4",
     "@types/node": "^22.7.7",
     "@types/react": "^18.3.11",
