@@ -1,7 +1,7 @@
-import type { ApiType } from '@/api'
 import { FragmentViewer } from '@/client/component/FragmentViewer'
 import type { FragmentInput } from '@/model/fragment'
 import type { Scrap } from '@/model/scrap'
+import { hcWithType } from '@/server/client'
 import {
   ActionIcon,
   Button,
@@ -16,7 +16,6 @@ import {
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler } from '@mantine/hooks'
 import { IconPencil } from '@tabler/icons-react'
-import { hc } from 'hono/client'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FragmentForm } from './FragmentForm'
 
@@ -28,7 +27,7 @@ export function ScrapViewer(props: ScrapViewerProps) {
   const [scrap, setScrap] = useState<Scrap | null>(null)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
 
-  const client = useMemo(() => hc<ApiType>('/api'), [])
+  const client = useMemo(() => hcWithType('/api'), [])
 
   const fetchScrap = useCallback(async () => {
     const res = await client.scraps[':id'].$get({
@@ -38,8 +37,8 @@ export function ScrapViewer(props: ScrapViewerProps) {
   }, [client, props.scrapId])
 
   const handleSubmitFragment = async (input: FragmentInput) => {
-    await client.scraps[':id'].fragments.$post({
-      param: { id: props.scrapId },
+    await client.scraps[':scrapId'].fragments.$post({
+      param: { scrapId: props.scrapId },
       json: input,
     })
     setScrap(await fetchScrap())
@@ -75,9 +74,8 @@ export function ScrapViewer(props: ScrapViewerProps) {
   }, [titleForm])
 
   const updateFragment = async (id: number, content: string) => {
-    await client.scraps[':scrapId'].fragments[':fragmentId'].$put({
+    await client.fragments[':fragmentId'].$put({
       param: {
-        scrapId: props.scrapId,
         fragmentId: id.toString(),
       },
       json: { content },

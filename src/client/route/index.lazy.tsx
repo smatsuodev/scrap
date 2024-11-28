@@ -1,5 +1,5 @@
-import type { ApiType } from '@/api'
 import type { Scrap } from '@/model/scrap'
+import { hcWithType } from '@/server/client'
 import {
   Center,
   Container,
@@ -11,7 +11,6 @@ import {
   UnstyledButton,
 } from '@mantine/core'
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
-import { hc } from 'hono/client'
 import { useEffect, useMemo, useState } from 'react'
 
 export const Route = createLazyFileRoute('/')({
@@ -30,7 +29,7 @@ function IndexPage() {
 }
 
 function RecentScrapList() {
-  const client = useMemo(() => hc<ApiType>('/api'), [])
+  const client = useMemo(() => hcWithType('/api'), [])
   const [scraps, setScraps] = useState<Scrap[] | null>(null)
   const navigate = useNavigate()
 

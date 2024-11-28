@@ -1,17 +1,13 @@
 {
+  "extends": ["./tsconfig.base.json"],
+  "exclude": ["./src/server"],
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "strict": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["@cloudflare/workers-types", "vite/client"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "noUncheckedIndexedAccess": true
-  }
+    "disableSourceOfProjectReferenceRedirect": true,
+    "noEmit": true
+  },
+  "references": [
+    {
+      "path": "./src/server"
+    }
+  ]
 }
