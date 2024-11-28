@@ -1,6 +1,6 @@
 import { FragmentViewer } from '@/client/component/FragmentViewer'
-import type { FragmentInput } from '@/model/fragment'
-import type { Scrap } from '@/model/scrap'
+import type { FragmentInput } from '@/common/model/fragment'
+import type { Scrap } from '@/common/model/scrap'
 import { hcWithType } from '@/server/client'
 import {
   ActionIcon,

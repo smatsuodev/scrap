@@ -1,4 +1,4 @@
-import type { FragmentId } from '@/model/fragment'
+import type { FragmentId } from '@/common/model/fragment'
 import { relations, sql } from 'drizzle-orm'
 import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 

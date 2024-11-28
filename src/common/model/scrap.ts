@@ -1,4 +1,4 @@
-import type { Fragment } from '@/model/fragment'
+import type { Fragment } from '@/common/model/fragment'
 
 export interface Scrap {
   id: string
