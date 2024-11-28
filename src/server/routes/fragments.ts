@@ -1,4 +1,4 @@
-import type { FragmentId } from '@/model/fragment'
+import type { FragmentId } from '@/common/model/fragment'
 import * as schema from '@/server/db/schema'
 import { zValidator } from '@hono/zod-validator'
 import { eq } from 'drizzle-orm'
