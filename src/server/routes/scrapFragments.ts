@@ -1,4 +1,4 @@
-import * as schema from '@/db/schema'
+import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
