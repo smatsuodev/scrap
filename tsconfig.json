@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig.base.json",
   "exclude": ["./src"],
+  "compilerOptions": {
+    "noEmit": true
+  },
   "references": [
     {
       "path": "./src/server"
