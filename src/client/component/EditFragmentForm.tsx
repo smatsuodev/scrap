@@ -1,7 +1,7 @@
 import FragmentEditor from '@/client/component/FragmentEditor'
 import type { FragmentFormValues } from '@/client/component/FragmentForm'
 import useEditFragmentDraft from '@/client/hook/useEditFragmentDraft'
-import type { Fragment } from '@/model/fragment'
+import type { Fragment } from '@/common/model/fragment'
 import { Button, Group, Modal, Text } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { getHotkeyHandler, useDisclosure } from '@mantine/hooks'

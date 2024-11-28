@@ -2,7 +2,7 @@
   "name": "scrap",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -r -k yarn:watch:server-types vite",
+    "dev": "concurrently -r -k yarn:watch:types vite",
     "build": "$npm_execpath run build:client && $npm_execpath run build:api",
     "build:client": "vite build --mode client",
     "build:api": "vite build",
@@ -12,7 +12,7 @@
     "migrate:remote": "drizzle-kit generate && wrangler d1 migrations apply scrap --remote ",
     "lint": "biome check",
     "lint:fix": "biome check --fix",
-    "watch:server-types": "tsc -b -w ./src/server",
+    "watch:types": "tsc -b -w",
     "typecheck": "tsc -b"
   },
   "dependencies": {

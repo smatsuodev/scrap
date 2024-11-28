@@ -1,4 +1,4 @@
-import type { FragmentId } from '@/model/fragment'
+import type { FragmentId } from '@/common/model/fragment'
 import { useCallback, useMemo } from 'react'
 
 export default function useEditFragmentDraft(fragmentId: FragmentId) {

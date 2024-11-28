@@ -1,4 +1,4 @@
-import type { Scrap } from '@/model/scrap'
+import type { Scrap } from '@/common/model/scrap'
 import { hcWithType } from '@/server/client'
 import {
   Center,
