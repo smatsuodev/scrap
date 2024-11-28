@@ -1,12 +1,18 @@
 {
   "extends": ["../../tsconfig.base.json"],
-  "include": ["**/*"],
   "compilerOptions": {
     "composite": true,
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
-    "outDir": "../build/types/server"
+    "outDir": "../build/types/client"
   },
-  "references": [{ "path": "../common" }]
+  "references": [
+    {
+      "path": "../server"
+    },
+    {
+      "path": "../common"
+    }
+  ]
 }

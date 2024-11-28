@@ -1,13 +1,14 @@
 {
-  "extends": ["./tsconfig.base.json"],
-  "exclude": ["./src/server"],
-  "compilerOptions": {
-    "disableSourceOfProjectReferenceRedirect": true,
-    "noEmit": true
-  },
+  "include": [],
   "references": [
     {
       "path": "./src/server"
+    },
+    {
+      "path": "./src/client"
+    },
+    {
+      "path": "./src/common"
     }
   ]
 }
