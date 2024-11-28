@@ -5,7 +5,8 @@
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
-    "outDir": "../build/types/client"
+    "outDir": "../build/types/client",
+    "disableSourceOfProjectReferenceRedirect": true
   },
   "references": [
     {
