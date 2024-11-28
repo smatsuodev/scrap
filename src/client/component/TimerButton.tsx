@@ -143,7 +143,9 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
           </Group>
         </Center>
       </Card>
-      <audio src='/static/timer-alarm.mp3' ref={audioRef} loop />
+      <audio src='/static/timer-alarm.mp3' ref={audioRef} loop>
+        <track kind='captions' />
+      </audio>
     </>
   )
 }
