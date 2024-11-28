@@ -46,9 +46,9 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@cloudflare/workers-types": "^4.20240529.0",
-    "@hono/vite-build": "^1.0.0",
+    "@hono/vite-build": "^1.1.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
-    "@hono/vite-dev-server": "^0.15.1",
+    "@hono/vite-dev-server": "^0.17.0",
     "@tanstack/router-devtools": "^1.77.5",
     "@tanstack/router-plugin": "^1.76.4",
     "@tsconfig/strictest": "^2.0.5",
