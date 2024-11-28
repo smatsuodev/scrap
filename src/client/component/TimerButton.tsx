@@ -1,6 +1,6 @@
 import { ActionIcon, Box, Card, Center, Group, Tooltip } from '@mantine/core'
 import { TimeInput, type TimeInputProps } from '@mantine/dates'
-import { useDisclosure, useInterval } from '@mantine/hooks'
+import { useInterval } from '@mantine/hooks'
 import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
@@ -9,22 +9,54 @@ import {
 } from '@tabler/icons-react'
 import { useCallback, useEffect, useState } from 'react'
 
+type TimerButtonUiState = {
+  isVisible: boolean
+}
+
+type TimerButtonActions = {
+  onOpenActionIconClicked: () => void
+  onCloseActionIconClicked: () => void
+}
+
+function useTimerButtonUiState(): {
+  uiState: TimerButtonUiState
+  actions: TimerButtonActions
+} {
+  const [uiState, setUiState] = useState<TimerButtonUiState>({
+    isVisible: false,
+  })
+
+  const onOpenActionIconClicked = useCallback(() => {
+    setUiState((state) => ({ ...state, isVisible: true }))
+  }, [])
+  const onCloseActionIconClicked = useCallback(() => {
+    setUiState((state) => ({ ...state, isVisible: false }))
+  }, [])
+
+  return {
+    uiState,
+    actions: {
+      onOpenActionIconClicked,
+      onCloseActionIconClicked,
+    },
+  }
+}
+
 export function TimerButton() {
-  const [isClockVisible, { open: openClock, close: closeClock }] =
-    useDisclosure()
+  const { uiState, actions } = useTimerButtonUiState()
 
-  const handleIconClicked = useCallback(() => {
-    openClock()
-  }, [openClock])
-
-  if (isClockVisible) {
-    return <TimeIndicator close={closeClock} />
+  if (uiState.isVisible) {
+    return <TimeIndicator close={actions.onCloseActionIconClicked} />
   }
 
   return (
     <Group>
       <Tooltip label='タイマー'>
-        <ActionIcon size='lg' variant='default' onClick={handleIconClicked}>
+        <ActionIcon
+          size='lg'
+          variant='default'
+          onClick={actions.onOpenActionIconClicked}
+        >
           <IconStopwatch />
         </ActionIcon>
       </Tooltip>
