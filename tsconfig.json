@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
-  "exclude": ["./src"],
+  "exclude": ["./src", "./build"],
   "compilerOptions": {
     "noEmit": true
   },
