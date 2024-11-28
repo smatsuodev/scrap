@@ -1,13 +1,28 @@
-import { ActionIcon, Box, Card, Center, Group, Tooltip } from '@mantine/core'
+import {
+  ActionIcon,
+  Box,
+  Card,
+  Center,
+  Group,
+  type MantineColor,
+  Tooltip,
+} from '@mantine/core'
 import { TimeInput, type TimeInputProps } from '@mantine/dates'
 import { useDisclosure, useInterval } from '@mantine/hooks'
 import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
+  IconPlayerStopFilled,
   IconStopwatch,
   IconX,
 } from '@tabler/icons-react'
-import { useCallback, useEffect, useState } from 'react'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 export function TimerButton() {
   const { isVisible, action } = useTimerVisibility()
@@ -40,8 +55,10 @@ type TimeIndicatorProps = {
   close: () => void
 }
 
+type TimerControlState = 'toStart' | 'toPause' | 'toStop'
+
 function TimeIndicator({ close }: TimeIndicatorProps) {
-  const { uiState, action } = useTimer()
+  const { state, action } = useTimer()
 
   const handleInputChanged = useCallback<
     Exclude<TimeInputProps['onChange'], undefined>
@@ -50,6 +67,32 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
       action.onInitialSecondsChanged(e.target.value)
     },
     [action],
+  )
+
+  const timerControllerStyle = useMemo<
+    Record<
+      TimerControlState,
+      { label: string; color: MantineColor; icon: ReactNode }
+    >
+  >(
+    () => ({
+      toStart: {
+        label: '開始',
+        color: 'teal',
+        icon: <IconPlayerPlayFilled />,
+      },
+      toPause: {
+        label: '一時停止',
+        color: 'orange',
+        icon: <IconPlayerPauseFilled />,
+      },
+      toStop: {
+        label: '停止',
+        color: 'red',
+        icon: <IconPlayerStopFilled />,
+      },
+    }),
+    [],
   )
 
   return (
@@ -63,21 +106,17 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
             variant='unstyled'
             size='xl'
             onChange={handleInputChanged}
-            value={uiState.time}
+            value={state.time}
             withSeconds
           />
-          <Tooltip label={uiState.isRunning ? '一時停止' : '開始'}>
+          <Tooltip label={timerControllerStyle[state.controller].label}>
             <ActionIcon
               size='md'
               variant='subtle'
-              color={uiState.isRunning ? 'red' : 'teal'}
-              onClick={action.toggleCountdown}
+              color={timerControllerStyle[state.controller].color}
+              onClick={action.controlTimer}
             >
-              {uiState.isRunning ? (
-                <IconPlayerPauseFilled />
-              ) : (
-                <IconPlayerPlayFilled />
-              )}
+              {timerControllerStyle[state.controller].icon}
             </ActionIcon>
           </Tooltip>
           <Tooltip label='タイマーを閉じる'>
@@ -94,6 +133,7 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
 function useTimer() {
   const [initialSeconds, setInitialSeconds] = useState(0)
   const [displaySeconds, setDisplaySeconds] = useState(0)
+  const [controlState, setControlState] = useState<TimerControlState>('toStart')
 
   const onInitialSecondsChanged = useCallback((input: string) => {
     const s = toSeconds(input)
@@ -107,21 +147,50 @@ function useTimer() {
     setDisplaySeconds((s) => s - 1)
   }, 1000)
 
+  const onTimerStarted = useCallback(() => {
+    countdown.start()
+    setControlState('toPause')
+  }, [countdown])
+  const onTimerPaused = useCallback(() => {
+    countdown.stop()
+    setControlState('toStart')
+  }, [countdown])
+  const onTimerStopped = useCallback(() => {
+    setDisplaySeconds(initialSeconds)
+    setControlState('toStart')
+  }, [initialSeconds])
+
+  const controlTimer = useMemo(() => {
+    switch (controlState) {
+      case 'toStart':
+        return onTimerStarted
+      case 'toPause':
+        return onTimerPaused
+      case 'toStop':
+        return onTimerStopped
+
+      default: {
+        const _: never = controlState
+        return _
+      }
+    }
+  }, [controlState, onTimerStarted, onTimerPaused, onTimerStopped])
+
   useEffect(() => {
     if (countdown.active && displaySeconds === 0) {
       countdown.stop()
-      setDisplaySeconds(initialSeconds)
+      setControlState('toStop')
     }
-  }, [displaySeconds, countdown, initialSeconds])
+  }, [displaySeconds, countdown])
 
   return {
-    uiState: {
+    state: {
       time: toTimeString(displaySeconds),
-      isRunning: countdown.active,
+      controller: controlState,
     },
     action: {
       onInitialSecondsChanged,
-      toggleCountdown: countdown.toggle,
+      controlTimer,
     },
   }
 }
