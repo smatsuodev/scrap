@@ -1,6 +1,6 @@
 import { ActionIcon, Box, Card, Center, Group, Tooltip } from '@mantine/core'
 import { TimeInput, type TimeInputProps } from '@mantine/dates'
-import { useInterval } from '@mantine/hooks'
+import { useDisclosure, useInterval } from '@mantine/hooks'
 import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
@@ -9,54 +9,17 @@ import {
 } from '@tabler/icons-react'
 import { useCallback, useEffect, useState } from 'react'
 
-type TimerButtonUiState = {
-  isVisible: boolean
-}
-
-type TimerButtonActions = {
-  onOpenActionIconClicked: () => void
-  onCloseActionIconClicked: () => void
-}
-
-function useTimerButtonUiState(): {
-  uiState: TimerButtonUiState
-  actions: TimerButtonActions
-} {
-  const [uiState, setUiState] = useState<TimerButtonUiState>({
-    isVisible: false,
-  })
-
-  const onOpenActionIconClicked = useCallback(() => {
-    setUiState((state) => ({ ...state, isVisible: true }))
-  }, [])
-  const onCloseActionIconClicked = useCallback(() => {
-    setUiState((state) => ({ ...state, isVisible: false }))
-  }, [])
-
-  return {
-    uiState,
-    actions: {
-      onOpenActionIconClicked,
-      onCloseActionIconClicked,
-    },
-  }
-}
-
 export function TimerButton() {
-  const { uiState, actions } = useTimerButtonUiState()
+  const { isVisible, action } = useTimerVisibility()
 
-  if (uiState.isVisible) {
-    return <TimeIndicator close={actions.onCloseActionIconClicked} />
+  if (isVisible) {
+    return <TimeIndicator close={action.close} />
   }
 
   return (
     <Group>
       <Tooltip label='タイマー'>
-        <ActionIcon
-          size='lg'
-          variant='default'
-          onClick={actions.onOpenActionIconClicked}
-        >
+        <ActionIcon size='lg' variant='default' onClick={action.open}>
           <IconStopwatch />
         </ActionIcon>
       </Tooltip>
@@ -64,38 +27,30 @@ export function TimerButton() {
   )
 }
 
+function useTimerVisibility() {
+  const [isVisible, action] = useDisclosure(false)
+
+  return {
+    isVisible,
+    action,
+  }
+}
+
 type TimeIndicatorProps = {
   close: () => void
 }
 
 function TimeIndicator({ close }: TimeIndicatorProps) {
-  const [initialSeconds, setInitialSeconds] = useState(0)
-  const [remainingSeconds, setRemainingSeconds] = useState(0)
-
-  const countdown = useInterval(() => setRemainingSeconds((s) => s - 1), 1000)
-  const handlePlayClicked = useCallback(() => {
-    countdown.start()
-  }, [countdown])
-  const handlePauseClicked = useCallback(() => {
-    countdown.stop()
-  }, [countdown])
-
-  useEffect(() => {
-    if (countdown.active && remainingSeconds === 0) {
-      countdown.stop()
-      setRemainingSeconds(initialSeconds)
-    }
-  }, [remainingSeconds, countdown, initialSeconds])
+  const { uiState, action } = useTimer()
 
   const handleInputChanged = useCallback<
     Exclude<TimeInputProps['onChange'], undefined>
-  >((e) => {
-    const seconds = toSeconds(e.currentTarget.value)
-    if (seconds !== null) {
-      setInitialSeconds(seconds)
-      setRemainingSeconds(seconds)
-    }
-  }, [])
+  >(
+    (e) => {
+      action.onInitialSecondsChanged(e.target.value)
+    },
+    [action],
+  )
 
   return (
     <Card h='34px' w='auto' px='4px' py='0' withBorder>
@@ -108,19 +63,17 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
             variant='unstyled'
             size='xl'
             onChange={handleInputChanged}
-            value={toTimeString(remainingSeconds)}
+            value={uiState.time}
             withSeconds
           />
-          <Tooltip label={countdown.active ? '一時停止' : '開始'}>
+          <Tooltip label={uiState.isRunning ? '一時停止' : '開始'}>
             <ActionIcon
               size='md'
               variant='subtle'
-              color={countdown.active ? 'red' : 'teal'}
-              onClick={
-                countdown.active ? handlePauseClicked : handlePlayClicked
-              }
+              color={uiState.isRunning ? 'red' : 'teal'}
+              onClick={action.toggleCountdown}
             >
-              {countdown.active ? (
+              {uiState.isRunning ? (
                 <IconPlayerPauseFilled />
               ) : (
                 <IconPlayerPlayFilled />
@@ -136,6 +89,41 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
       </Center>
     </Card>
   )
+}
+
+function useTimer() {
+  const [initialSeconds, setInitialSeconds] = useState(0)
+  const [displaySeconds, setDisplaySeconds] = useState(0)
+
+  const onInitialSecondsChanged = useCallback((input: string) => {
+    const s = toSeconds(input)
+    if (s !== null) {
+      setDisplaySeconds(s)
+      setInitialSeconds(s)
+    }
+  }, [])
+
+  const countdown = useInterval(() => {
+    setDisplaySeconds((s) => s - 1)
+  }, 1000)
+
+  useEffect(() => {
+    if (countdown.active && displaySeconds === 0) {
+      countdown.stop()
+      setDisplaySeconds(initialSeconds)
+    }
+  }, [displaySeconds, countdown, initialSeconds])
+
+  return {
+    uiState: {
+      time: toTimeString(displaySeconds),
+      isRunning: countdown.active,
+    },
+    action: {
+      onInitialSecondsChanged,
+      toggleCountdown: countdown.toggle,
+    },
+  }
 }
 
 function toTimeString(seconds: number) {
