@@ -135,13 +135,18 @@ function useTimer() {
   const [displaySeconds, setDisplaySeconds] = useState(0)
   const [controlState, setControlState] = useState<TimerControlState>('toStart')
 
-  const onInitialSecondsChanged = useCallback((input: string) => {
-    const s = toSeconds(input)
-    if (s !== null) {
-      setDisplaySeconds(s)
-      setInitialSeconds(s)
-    }
-  }, [])
+  const onInitialSecondsChanged = useCallback(
+    (input: string) => {
+      if (controlState !== 'toStart') return
+
+      const s = toSeconds(input)
+      if (s !== null) {
+        setDisplaySeconds(s)
+        setInitialSeconds(s)
+      }
+    },
+    [controlState],
+  )
 
   const countdown = useInterval(() => {
     setDisplaySeconds((s) => s - 1)
