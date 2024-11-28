@@ -1,4 +1,4 @@
-import * as schema from '@/db/schema'
+import * as schema from '@/server/db/schema'
 import { drizzle } from 'drizzle-orm/d1'
 import { createMiddleware } from 'hono/factory'
 import type { AppEnv } from '../env'
