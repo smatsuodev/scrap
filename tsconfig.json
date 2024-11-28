@@ -1,5 +1,6 @@
 {
-  "include": [],
+  "extends": "./tsconfig.base.json",
+  "exclude": ["./src"],
   "references": [
     {
       "path": "./src/server"
