@@ -105,6 +105,7 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
           <TimeInput
             variant='unstyled'
             size='xl'
+            w='91px'
             onChange={handleInputChanged}
             value={state.time}
             withSeconds
