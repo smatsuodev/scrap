@@ -27,6 +27,7 @@ const routes = api
   .route('/', scraps)
   .route('/', fragments)
   .route('/', scrapFragments)
+  .route('/', auth)
 
 export type ApiType = typeof routes
 export default api
