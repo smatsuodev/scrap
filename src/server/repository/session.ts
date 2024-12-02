@@ -11,7 +11,7 @@ const SessionSchema = z.object({
 })
 export type Session = z.infer<typeof SessionSchema>
 
-interface ISessionRepository {
+export interface ISessionRepository {
   createSession(userId: UserId): Promise<Session>
   storeSession(session: Session): Promise<void>
   loadSession(sessionId: SessionId): Promise<Session | null>

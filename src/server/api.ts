@@ -1,13 +1,15 @@
+import { sessionRepositoryMiddleware } from '@/server/middleware/sessionRepository'
 import scrapFragments from '@/server/routes/scrapFragments'
 import { Hono } from 'hono'
 import type { AppEnv } from './env'
 import { drizzleMiddleware } from './middleware/drizzle'
+import auth from './routes/auth'
 import fragments from './routes/fragments'
 import scraps from './routes/scraps'
 
 const api = new Hono<AppEnv>()
 
-api.use(drizzleMiddleware)
+api.use(drizzleMiddleware).use(sessionRepositoryMiddleware)
 
 /**
  * scraps などは /scraps などの basePath が指定されているので、/ に連結する
