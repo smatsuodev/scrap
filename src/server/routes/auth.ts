@@ -14,6 +14,9 @@ const authInputValidator = zValidator(
   }),
 )
 
+const DUMMY_PASSWORD_HASH =
+  '$argon2id$v=19$m=65536,t=3,p=4$0Q0Ws2400tORdPKxaOIN9g$q3UyPdURWOL4y6sG7jEtkfgxnGPDZ/9WWWNqdpq2Elk' as const
+
 const auth = new Hono<AppEnv>()
   .basePath('/auth')
   .post('/login', authInputValidator, async (c) => {
@@ -21,12 +24,14 @@ const auth = new Hono<AppEnv>()
     const user = await c.var.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, userId),
     })
-    if (!user) {
-      return c.body(null, 401)
-    }
 
-    const isValid = await argon2.verify(user.password, password)
-    if (!isValid) {
+    /**
+     * ユーザーが存在しない場合に即座にレスポンスを返すと、timing attack によってユーザーの存在を推測される可能性がある
+     * そのため、ユーザーが存在しない場合でも、ダミーのパスワードハッシュを使って検証を行う
+     */
+    const passwordHash = user?.password ?? DUMMY_PASSWORD_HASH
+    const isValid = await argon2.verify(passwordHash, password)
+    if (!user || !isValid) {
       return c.body(null, 401)
     }
 
