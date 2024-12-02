@@ -1,4 +1,5 @@
 import '@mantine/core/styles.css'
+import '@mantine/dates/styles.css'
 import { routeTree } from '@/client/routeTree.gen'
 import { MantineProvider, createTheme } from '@mantine/core'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
