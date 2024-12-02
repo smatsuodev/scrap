@@ -931,7 +931,7 @@
   resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.13.2.tgz#1f29fa06102bf2d26d875dd4de70590c95c22ca4"
   integrity sha512-0w8nEmAyx0Ul0CQp8BL2VtAG4YVdpzXd/mvvM+l0G5Oq22pUyHS+KeFFPSY+czLOF5NAiV3MUNPD1n14Ol5svg==
 
-"@hono/vite-build@^1.0.0":
+"@hono/vite-build@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@hono/vite-build/-/vite-build-1.1.0.tgz#5828e3ca26bd712a4c01bd26e7e03e84914efa7d"
   integrity sha512-I5FZGZq1aYw+4KA4Ff4MD6xGmZAaldJNB0Gg89RTEYBz1EJdA0WMZtr9IftB93/oyWizOXX8Q9tHVXAUFxeRaQ==
@@ -941,10 +941,10 @@
   resolved "https://registry.yarnpkg.com/@hono/vite-cloudflare-pages/-/vite-cloudflare-pages-0.4.2.tgz#35ba186ba1a9a0b9599f5ef9ab0a18f1fe0c761c"
   integrity sha512-fvSmWNtL7rMTa6tfj0dJNu0UStp8veb2r1BfutoKtJ6GaTzO1sR5ElQw9jIYo46oTBcx8+i/9+NzyGR56awtrQ==
 
-"@hono/vite-dev-server@^0.15.1":
-  version "0.15.2"
-  resolved "https://registry.yarnpkg.com/@hono/vite-dev-server/-/vite-dev-server-0.15.2.tgz#c79a0ee8c009962cbf3dfc4aa030ab09fe92584d"
-  integrity sha512-mGnXHze5Qh9jAEayREBlA1ExM+QTpC+peramm/kXIEhaDWUfpfZvAe4mJyDNIdXXn/B1wy9m8TgWhzN1mgPaqQ==
+"@hono/vite-dev-server@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@hono/vite-dev-server/-/vite-dev-server-0.17.0.tgz#ec5212bc85ecb096333cd7488bb2800d0dd486dd"
+  integrity sha512-EvGOIj1MoY9uV94onXXz88yWaTxzUK+Mv8LiIEsR/9eSFoVUnHVR0B7l7iNIsxfHYRN7tbPDMWBSnD2RQun3yw==
   dependencies:
     "@hono/node-server" "^1.12.0"
     minimatch "^9.0.3"

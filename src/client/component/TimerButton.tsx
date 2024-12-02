@@ -21,6 +21,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -95,39 +96,58 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
     [],
   )
 
+  const audioRef = useRef<HTMLAudioElement>(null)
+  useEffect(() => {
+    if (state.controller === 'toStop') {
+      audioRef.current?.play()
+    } else {
+      audioRef.current?.pause()
+    }
+  }, [state])
+
   return (
-    <Card h='34px' w='auto' px='4px' py='0' withBorder>
-      <Center h='100%'>
-        <Group gap='0' justify='center'>
-          <Box mr='4px'>
-            <IconStopwatch />
-          </Box>
-          <TimeInput
-            variant='unstyled'
-            size='xl'
-            w='91px'
-            onChange={handleInputChanged}
-            value={state.time}
-            withSeconds
-          />
-          <Tooltip label={timerControllerStyle[state.controller].label}>
-            <ActionIcon
-              size='md'
-              variant='subtle'
-              color={timerControllerStyle[state.controller].color}
-              onClick={action.controlTimer}
-            >
-              {timerControllerStyle[state.controller].icon}
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label='タイマーを閉じる'>
-            <ActionIcon color='gray' size='md' variant='subtle' onClick={close}>
-              <IconX onClick={close} />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
-      </Center>
-    </Card>
+    <>
+      <Card h='34px' w='auto' px='4px' py='0' withBorder>
+        <Center h='100%'>
+          <Group gap='0' justify='center'>
+            <Box mr='4px'>
+              <IconStopwatch />
+            </Box>
+            <TimeInput
+              variant='unstyled'
+              size='xl'
+              w='91px'
+              onChange={handleInputChanged}
+              value={state.time}
+              withSeconds
+            />
+            <Tooltip label={timerControllerStyle[state.controller].label}>
+              <ActionIcon
+                size='md'
+                variant='subtle'
+                color={timerControllerStyle[state.controller].color}
+                onClick={action.controlTimer}
+              >
+                {timerControllerStyle[state.controller].icon}
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label='タイマーを閉じる'>
+              <ActionIcon
+                color='gray'
+                size='md'
+                variant='subtle'
+                onClick={close}
+              >
+                <IconX onClick={close} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+        </Center>
+      </Card>
+      <audio src='/static/timer-alarm.mp3' ref={audioRef} loop>
+        <track kind='captions' />
+      </audio>
+    </>
   )
 }
 
