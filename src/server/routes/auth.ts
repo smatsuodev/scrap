@@ -1,4 +1,4 @@
-import { createSession } from '@/common/model/session'
+import { type SessionId, createSession } from '@/common/model/session'
 import type { User, UserId } from '@/common/model/user'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
@@ -61,5 +61,26 @@ const auth = new Hono<AppEnv>()
 
     return c.json({ id: userId } satisfies User, 201)
   })
+  .post(
+    '/logout',
+    zValidator(
+      'json',
+      z.object({
+        sessionId: z.string().transform((v) => v as SessionId),
+      }),
+    ),
+    async (c) => {
+      const { sessionId } = c.req.valid('json')
+
+      const session = await c.var.sessionRepository.loadSession(sessionId)
+      if (!session) {
+        return c.body(null, 401)
+      }
+
+      await c.var.sessionRepository.removeSession(session)
+
+      return c.body(null, 204)
+    },
+  )
 
 export default auth
