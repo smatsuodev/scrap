@@ -26,3 +26,8 @@ export const scraps = sqliteTable('scraps', {
 export const scrapsRelations = relations(scraps, ({ many }) => ({
   fragments: many(fragments),
 }))
+
+export const users = sqliteTable('users', {
+  id: text().primaryKey(),
+  password: text().notNull(),
+})
