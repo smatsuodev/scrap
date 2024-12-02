@@ -44,7 +44,7 @@ const auth = new Hono<AppEnv>()
   .post('/register', authInputValidator, async (c) => {
     const { userId, password } = c.req.valid('json')
 
-    // login と同様に timing attack によるユーザーの存在推測を防ぐため、毎回ハッシュを計算する
+    // login と同様に timing attack によるユーザーの存在の推測を防ぐため、毎回ハッシュを計算する
     const passwordHash = await argon2.hash(password)
 
     const existingUser = await c.var.db.query.users.findFirst({
