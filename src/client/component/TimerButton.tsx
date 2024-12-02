@@ -65,7 +65,7 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
     Exclude<TimeInputProps['onChange'], undefined>
   >(
     (e) => {
-      action.onInitialSecondsChanged(e.target.value)
+      action.updateInitialSeconds(e.target.value)
     },
     [action],
   )
@@ -156,7 +156,7 @@ function useTimer() {
   const [displaySeconds, setDisplaySeconds] = useState(0)
   const [controlState, setControlState] = useState<TimerControlState>('toStart')
 
-  const onInitialSecondsChanged = useCallback(
+  const updateInitialSeconds = useCallback(
     (input: string) => {
       if (controlState !== 'toStart') return
 
@@ -215,7 +215,7 @@ function useTimer() {
       controller: controlState,
     },
     action: {
-      onInitialSecondsChanged,
+      updateInitialSeconds,
       controlTimer,
     },
   }
