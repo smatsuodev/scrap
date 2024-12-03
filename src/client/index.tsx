@@ -1,8 +1,10 @@
 import '@mantine/core/styles.css'
 import '@mantine/dates/styles.css'
+import '@mantine/notifications/styles.css'
 import './index.css'
 import { routeTree } from '@/client/routeTree.gen'
 import { MantineProvider, createTheme } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { createRoot } from 'react-dom/client'
 
@@ -19,6 +21,7 @@ declare module '@tanstack/react-router' {
 function App() {
   return (
     <MantineProvider theme={theme}>
+      <Notifications />
       <RouterProvider router={router} />
     </MantineProvider>
   )
