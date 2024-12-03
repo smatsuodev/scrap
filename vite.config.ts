@@ -59,6 +59,9 @@ export default defineConfig(({ mode, command }) => {
   }
 
   return {
+    ssr: {
+      external: ['react', 'react-dom'],
+    },
     plugins: [
       suppressModuleLevelDirectiveWarning(),
       build({
