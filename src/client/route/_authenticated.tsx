@@ -1,11 +1,9 @@
-import { hcWithType } from '@/server/client'
+import { isAuthenticated } from '@/client/lib/auth'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async () => {
-    const client = hcWithType('/api')
-    const res = await client.users.me.$get()
-    if (res.status === 401) {
+    if (!(await isAuthenticated())) {
       throw redirect({
         to: '/login',
       })

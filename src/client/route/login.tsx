@@ -1,9 +1,17 @@
 import LoginForm from '@/client/component/auth/LoginForm'
 import LoginHeader from '@/client/component/auth/LoginHeader'
+import { isAuthenticated } from '@/client/lib/auth'
 import { Container, Paper } from '@mantine/core'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/login')({
+export const Route = createFileRoute('/login')({
+  beforeLoad: async () => {
+    if (await isAuthenticated()) {
+      throw redirect({
+        to: '/',
+      })
+    }
+  },
   component: LoginPage,
 })
 
