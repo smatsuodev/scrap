@@ -2,8 +2,19 @@ import build from '@hono/vite-build/cloudflare-pages'
 import devServer from '@hono/vite-dev-server'
 import adapter from '@hono/vite-dev-server/cloudflare'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
-import { type Plugin, defineConfig } from 'vite'
+import { type AliasOptions, type Plugin, defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
+
+const commonAliasOptions: AliasOptions = {
+  // アイコンごとにチャンクが生成されるバグの workaround
+  // refs: https://github.com/tabler/tabler-icons/issues/1233#issuecomment-2428245119
+  '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
+}
+
+const commonTanStackRouterOptions: Parameters<typeof TanStackRouterVite>[0] = {
+  routesDirectory: 'src/client/route',
+  generatedRouteTree: 'src/client/routeTree.gen.ts',
+}
 
 /**
  *  Module level directives cause errors when bundled, "use client" in "..." was ignored.
@@ -41,19 +52,12 @@ export default defineConfig(({ mode, command }) => {
         },
       },
       resolve: {
-        alias: {
-          // アイコンごとにチャンクが生成されるバグの workaround
-          // refs: https://github.com/tabler/tabler-icons/issues/1233#issuecomment-2428245119
-          '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
-        },
+        alias: commonAliasOptions,
       },
       plugins: [
         tsconfigPaths(),
         suppressModuleLevelDirectiveWarning(),
-        TanStackRouterVite({
-          routesDirectory: 'src/client/route',
-          generatedRouteTree: 'src/client/routeTree.gen.ts',
-        }),
+        TanStackRouterVite(commonTanStackRouterOptions),
       ],
     }
   }
@@ -73,19 +77,9 @@ export default defineConfig(({ mode, command }) => {
         entry: 'src/server/index.tsx',
       }),
       ...(command === 'serve'
-        ? [
-            TanStackRouterVite({
-              routesDirectory: 'src/client/route',
-              generatedRouteTree: 'src/client/routeTree.gen.ts',
-            }),
-          ]
+        ? [TanStackRouterVite(commonTanStackRouterOptions)]
         : []),
     ],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
-      },
-    },
+    resolve: commonAliasOptions,
   }
 })
