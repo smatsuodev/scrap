@@ -16,11 +16,18 @@ import { Route as rootRoute } from './route/__root'
 
 // Create Virtual Routes
 
+const RegisterLazyImport = createFileRoute('/register')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
 const ScrapsScrapIdLazyImport = createFileRoute('/scraps/$scrapId')()
 
 // Create/Update Routes
+
+const RegisterLazyRoute = RegisterLazyImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./route/register.lazy').then((d) => d.Route))
 
 const LoginLazyRoute = LoginLazyImport.update({
   id: '/login',
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/scraps/$scrapId': {
       id: '/scraps/$scrapId'
       path: '/scraps/$scrapId'
@@ -75,12 +89,14 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
   '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
   '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
 }
 
@@ -88,27 +104,30 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
   '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/scraps/$scrapId'
+  fullPaths: '/' | '/login' | '/register' | '/scraps/$scrapId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/scraps/$scrapId'
-  id: '__root__' | '/' | '/login' | '/scraps/$scrapId'
+  to: '/' | '/login' | '/register' | '/scraps/$scrapId'
+  id: '__root__' | '/' | '/login' | '/register' | '/scraps/$scrapId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
+  RegisterLazyRoute: typeof RegisterLazyRoute
   ScrapsScrapIdLazyRoute: typeof ScrapsScrapIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
+  RegisterLazyRoute: RegisterLazyRoute,
   ScrapsScrapIdLazyRoute: ScrapsScrapIdLazyRoute,
 }
 
@@ -126,6 +145,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
+        "/register",
         "/scraps/$scrapId"
       ]
     },
@@ -134,6 +154,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.lazy.tsx"
+    },
+    "/register": {
+      "filePath": "register.lazy.tsx"
     },
     "/scraps/$scrapId": {
       "filePath": "scraps/$scrapId.lazy.tsx"
