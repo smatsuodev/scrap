@@ -64,7 +64,7 @@ export default function LoginForm() {
         disabled={!form.isValid()}
         loading={loading}
       >
-        Log in
+        ログイン
       </Button>
     </form>
   )
