@@ -1,10 +1,12 @@
-import type { SessionId } from '@/common/model/session'
 import type { User, UserId } from '@/common/model/user'
+import { SESSION_COOKIE_NAME } from '@/server/constant/session'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
+import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
 import { zValidator } from '@hono/zod-validator'
 import argon2 from 'argon2'
 import { Hono } from 'hono'
+import { deleteCookie, setCookie } from 'hono/cookie'
 import { z } from 'zod'
 
 const authInputValidator = zValidator(
@@ -37,8 +39,14 @@ const auth = new Hono<AppEnv>()
     }
 
     const session = await c.var.sessionRepository.createSession(userId)
+    setCookie(c, SESSION_COOKIE_NAME, session.id, {
+      httpOnly: true,
+      sameSite: 'strict',
+      // 開発環境で secure を有効化すると cookie が送られなくなるので、本番環境でのみ有効化する
+      secure: import.meta.env.PROD,
+    })
 
-    return c.json(session)
+    return c.body(null, 204)
   })
   .post('/register', authInputValidator, async (c) => {
     const { userId, password } = c.req.valid('json')
@@ -60,26 +68,17 @@ const auth = new Hono<AppEnv>()
 
     return c.json({ id: userId } satisfies User, 201)
   })
-  .post(
-    '/logout',
-    zValidator(
-      'json',
-      z.object({
-        sessionId: z.string().transform((v) => v as SessionId),
-      }),
-    ),
-    async (c) => {
-      const { sessionId } = c.req.valid('json')
+  .post('/logout', sessionAuthMiddleware, async (c) => {
+    const session = c.var.session
+    if (!session) {
+      // 認証 middleware を通しているので、実際は実行されないはず
+      return c.body(null, 401)
+    }
 
-      const session = await c.var.sessionRepository.loadSession(sessionId)
-      if (!session) {
-        return c.body(null, 401)
-      }
+    await c.var.sessionRepository.removeSession(session)
+    deleteCookie(c, SESSION_COOKIE_NAME)
 
-      await c.var.sessionRepository.removeSession(session)
-
-      return c.body(null, 204)
-    },
-  )
+    return c.body(null, 204)
+  })
 
 export default auth
