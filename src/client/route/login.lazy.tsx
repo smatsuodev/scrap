@@ -10,6 +10,7 @@ import {
   Title,
 } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 
@@ -45,6 +46,11 @@ export function LoginPage() {
       },
     })
     if (!res.ok) {
+      notifications.show({
+        color: 'red',
+        title: 'ログインに失敗しました',
+        message: 'ID またはパスワードが正しくありません',
+      })
       form.setFieldValue('password', '')
       setLoading(false)
       return
