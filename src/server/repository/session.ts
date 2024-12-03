@@ -9,6 +9,7 @@ import { ulid } from 'ulidx'
 export interface ISessionRepository {
   createSession(userId: UserId): Promise<Session>
   loadSession(sessionId: SessionId): Promise<Session | null>
+  removeSession(session: Session): Promise<void>
 }
 
 export class KVSessionRepository implements ISessionRepository {
@@ -43,6 +44,11 @@ export class KVSessionRepository implements ISessionRepository {
       console.error(e)
       return null
     }
+  }
+
+  async removeSession(session: Session): Promise<void> {
+    const key = this.formatKey(session.id)
+    await this.kv.delete(key)
   }
 
   private formatKey(sessionId: SessionId): string {

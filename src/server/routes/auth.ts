@@ -1,4 +1,5 @@
-import type { UserId } from '@/common/model/user'
+import type { SessionId } from '@/common/model/session'
+import type { User, UserId } from '@/common/model/user'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
 import { zValidator } from '@hono/zod-validator'
@@ -40,14 +41,45 @@ const auth = new Hono<AppEnv>()
     return c.json(session)
   })
   .post('/register', authInputValidator, async (c) => {
-    // TODO: これは動作確認用の仮実装
     const { userId, password } = c.req.valid('json')
-    const hash = await argon2.hash(password)
+
+    // login と同様に timing attack によるユーザーの存在の推測を防ぐため、毎回ハッシュを計算する
+    const passwordHash = await argon2.hash(password)
+
+    const existingUser = await c.var.db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, userId),
+    })
+    if (existingUser) {
+      return c.body(null, 409) // Conflict
+    }
+
     await c.var.db.insert(schema.users).values({
       id: userId,
-      password: hash,
+      password: passwordHash,
     })
-    return c.body(null, 201)
+
+    return c.json({ id: userId } satisfies User, 201)
   })
+  .post(
+    '/logout',
+    zValidator(
+      'json',
+      z.object({
+        sessionId: z.string().transform((v) => v as SessionId),
+      }),
+    ),
+    async (c) => {
+      const { sessionId } = c.req.valid('json')
+
+      const session = await c.var.sessionRepository.loadSession(sessionId)
+      if (!session) {
+        return c.body(null, 401)
+      }
+
+      await c.var.sessionRepository.removeSession(session)
+
+      return c.body(null, 204)
+    },
+  )
 
 export default auth
