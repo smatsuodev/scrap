@@ -11,13 +11,15 @@ import {
 } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 export const Route = createLazyFileRoute('/login')({
   component: LoginPage,
 })
 
 export function LoginPage() {
+  const [loading, setLoading] = useState<boolean>(false)
+
   const navigate = useNavigate()
   const form = useForm({
     mode: 'controlled',
@@ -34,6 +36,8 @@ export function LoginPage() {
   const client = useMemo(() => hcWithType('/api'), [])
 
   const handleLogin = form.onSubmit(async (values) => {
+    setLoading(true)
+
     const res = await client.auth.login.$post({
       json: {
         userId: values.userId,
@@ -42,9 +46,11 @@ export function LoginPage() {
     })
     if (!res.ok) {
       form.setFieldValue('password', '')
+      setLoading(false)
       return
     }
 
+    // 遷移するまで loading は解除しない
     await navigate({ to: '/' })
   })
 
@@ -68,7 +74,13 @@ export function LoginPage() {
             mt='md'
           />
 
-          <Button fullWidth mt='xl' disabled={!form.isValid()} type='submit'>
+          <Button
+            type='submit'
+            fullWidth
+            mt='xl'
+            disabled={!form.isValid()}
+            loading={loading}
+          >
             Log in
           </Button>
         </form>
