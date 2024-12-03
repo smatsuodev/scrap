@@ -76,10 +76,10 @@ export default defineConfig(({ mode, command }) => {
         adapter,
         entry: 'src/server/index.tsx',
       }),
-      ...(command === 'serve'
-        ? [TanStackRouterVite(commonTanStackRouterOptions)]
-        : []),
-    ],
+      command === 'serve'
+        ? TanStackRouterVite(commonTanStackRouterOptions)
+        : null,
+    ].filter(Boolean),
     resolve: commonAliasOptions,
   }
 })
