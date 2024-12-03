@@ -6,7 +6,7 @@ import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
 import { zValidator } from '@hono/zod-validator'
 import argon2 from 'argon2'
 import { Hono } from 'hono'
-import { setCookie } from 'hono/cookie'
+import { deleteCookie, setCookie } from 'hono/cookie'
 import { z } from 'zod'
 
 const authInputValidator = zValidator(
@@ -76,6 +76,7 @@ const auth = new Hono<AppEnv>()
     }
 
     await c.var.sessionRepository.removeSession(session)
+    deleteCookie(c, SESSION_COOKIE_NAME)
 
     return c.body(null, 204)
   })
