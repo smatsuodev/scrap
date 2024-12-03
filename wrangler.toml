@@ -9,6 +9,6 @@ id = "c05d577e52254456931cef1e83fb0cf4"
 
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
-database_name = "scrap_prod"
+database_name = "scrap"
 database_id = "5c11a0e5-3460-480c-bb5c-0971dd645f47"
 migrations_dir = "drizzle"
