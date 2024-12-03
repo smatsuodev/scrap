@@ -1,4 +1,5 @@
 import type { FragmentId } from '@/common/model/fragment'
+import type { UserId } from '@/common/model/user'
 import { relations, sql } from 'drizzle-orm'
 import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
@@ -26,3 +27,8 @@ export const scraps = sqliteTable('scraps', {
 export const scrapsRelations = relations(scraps, ({ many }) => ({
   fragments: many(fragments),
 }))
+
+export const users = sqliteTable('users', {
+  id: text().$type<UserId>().primaryKey(),
+  password: text().notNull(),
+})
