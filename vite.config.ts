@@ -3,7 +3,30 @@ import build from '@hono/vite-build/cloudflare-pages'
 import devServer from '@hono/vite-dev-server'
 import adapter from '@hono/vite-dev-server/cloudflare'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
-import { defineConfig } from 'vite'
+import { type Plugin, defineConfig } from 'vite'
+
+/**
+ *  Module level directives cause errors when bundled, "use client" in "..." was ignored.
+ *  という警告の抑制。
+ *  RSC は使っていないので、無視してよいはず
+ */
+function suppressModuleLevelDirectiveWarning(): Plugin {
+  return {
+    name: 'suppress-module-level-directive-warning',
+    config: () => ({
+      build: {
+        rollupOptions: {
+          onwarn(warning, warn) {
+            if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+              return
+            }
+            warn(warning)
+          },
+        },
+      },
+    }),
+  }
+}
 
 export default defineConfig(({ mode, command }) => {
   if (mode === 'client') {
@@ -26,6 +49,7 @@ export default defineConfig(({ mode, command }) => {
         },
       },
       plugins: [
+        suppressModuleLevelDirectiveWarning(),
         TanStackRouterVite({
           routesDirectory: 'src/client/route',
           generatedRouteTree: 'src/client/routeTree.gen.ts',
@@ -36,6 +60,7 @@ export default defineConfig(({ mode, command }) => {
 
   return {
     plugins: [
+      suppressModuleLevelDirectiveWarning(),
       build({
         entry: 'src/server/index.tsx',
       }),
