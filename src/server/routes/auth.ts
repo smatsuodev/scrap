@@ -1,4 +1,3 @@
-import { createSession } from '@/common/model/session'
 import type { UserId } from '@/common/model/user'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
@@ -36,8 +35,7 @@ const auth = new Hono<AppEnv>()
       return c.body(null, 401)
     }
 
-    const session = createSession(userId)
-    await c.var.sessionRepository.storeSession(session)
+    const session = await c.var.sessionRepository.createSession(userId)
 
     return c.json(session)
   })
