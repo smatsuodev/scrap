@@ -43,6 +43,12 @@ export default function LoginForm() {
       return
     }
 
+    notifications.show({
+      color: 'blue',
+      title: 'ログインしました',
+      message: 'トップページに遷移します',
+    })
+
     // 遷移するまで loading は解除しない
     await navigate({ to: '/' })
   })
