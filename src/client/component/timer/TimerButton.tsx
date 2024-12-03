@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@mantine/core'
 import { TimeInput, type TimeInputProps } from '@mantine/dates'
-import { useDisclosure, useInterval } from '@mantine/hooks'
+import { useDisclosure } from '@mantine/hooks'
 import {
   IconPlayerPauseFilled,
   IconPlayerPlayFilled,
@@ -24,6 +24,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import CountdownWorker from './countdown.worker?worker'
 
 export function TimerButton() {
   const { isVisible, action } = useTimerVisibility()
@@ -143,7 +144,7 @@ function TimeIndicator({ close }: TimeIndicatorProps) {
           </Group>
         </Center>
       </Card>
-      <audio src='/timer-alarm.mp3' ref={audioRef} loop>
+      <audio src='/static/timer-alarm.mp3' ref={audioRef} loop>
         <track kind='captions' />
       </audio>
     </>
@@ -154,6 +155,7 @@ function useTimer() {
   const [initialSeconds, setInitialSeconds] = useState(0)
   const [displaySeconds, setDisplaySeconds] = useState(0)
   const [controlState, setControlState] = useState<TimerControlState>('toStart')
+  const [isCountdownActive, setIsCountdownActive] = useState(false)
 
   const updateInitialSeconds = useCallback(
     (input: string) => {
@@ -168,18 +170,37 @@ function useTimer() {
     [controlState],
   )
 
-  const countdown = useInterval(() => {
-    setDisplaySeconds((s) => s - 1)
-  }, 1000)
+  const countdownRef = useRef<Worker | null>(null)
+
+  useEffect(() => {
+    countdownRef.current = new CountdownWorker()
+
+    countdownRef.current.onmessage = () => {
+      setDisplaySeconds((s) => s - 1)
+    }
+
+    return () => {
+      countdownRef.current?.terminate()
+    }
+  }, [])
+
+  const startCountdown = useCallback(() => {
+    countdownRef.current?.postMessage('start')
+    setIsCountdownActive(true)
+  }, [])
+  const stopCountdown = useCallback(() => {
+    countdownRef.current?.postMessage('stop')
+    setIsCountdownActive(false)
+  }, [])
 
   const onTimerStarted = useCallback(() => {
-    countdown.start()
+    startCountdown()
     setControlState('toPause')
-  }, [countdown])
+  }, [startCountdown])
   const onTimerPaused = useCallback(() => {
-    countdown.stop()
+    stopCountdown()
     setControlState('toStart')
-  }, [countdown])
+  }, [stopCountdown])
   const onTimerStopped = useCallback(() => {
     setDisplaySeconds(initialSeconds)
     setControlState('toStart')
@@ -202,11 +223,11 @@ function useTimer() {
   }, [controlState, onTimerStarted, onTimerPaused, onTimerStopped])
 
   useEffect(() => {
-    if (countdown.active && displaySeconds === 0) {
-      countdown.stop()
+    if (isCountdownActive && displaySeconds === 0) {
+      stopCountdown()
       setControlState('toStop')
     }
-  }, [displaySeconds, countdown])
+  }, [isCountdownActive, displaySeconds, stopCountdown])
 
   return {
     state: {
