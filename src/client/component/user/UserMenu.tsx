@@ -1,7 +1,10 @@
 import type { User } from '@/common/model/user'
+import { hcWithType } from '@/server/client'
 import { Group, Menu, Text, UnstyledButton, rem } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import { IconLogout, IconUserCircle } from '@tabler/icons-react'
-import { forwardRef } from 'react'
+import { useNavigate } from '@tanstack/react-router'
+import { forwardRef, useMemo } from 'react'
 
 type UserButtonProps = {
   userId: string
@@ -33,6 +36,23 @@ export type UserMenuProps = {
 }
 
 export default function UserMenu(props: UserMenuProps) {
+  const client = useMemo(() => hcWithType('/api'), [])
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    const res = await client.auth.logout.$post()
+    if (!res.ok) {
+      notifications.show({
+        color: 'red',
+        title: 'ログアウトに失敗しました',
+        message: 'もう一度お試しください',
+      })
+      return
+    }
+
+    await navigate({ to: '/login' })
+  }
+
   return (
     <Menu shadow='md'>
       <Menu.Target>
@@ -44,6 +64,7 @@ export default function UserMenu(props: UserMenuProps) {
           leftSection={
             <IconLogout style={{ width: rem(14), height: rem(14) }} />
           }
+          onClick={handleLogout}
         >
           ログアウト
         </Menu.Item>
