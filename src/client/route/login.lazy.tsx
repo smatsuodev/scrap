@@ -1,5 +1,5 @@
-import LoginForm from '@/client/component/LoginForm'
-import LoginHeader from '@/client/component/LoginHeader'
+import LoginForm from '@/client/component/auth/LoginForm'
+import LoginHeader from '@/client/component/auth/LoginHeader'
 import { Container, Paper } from '@mantine/core'
 import { createLazyFileRoute } from '@tanstack/react-router'
 
