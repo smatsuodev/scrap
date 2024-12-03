@@ -1,3 +1,4 @@
+import { hcWithType } from '@/server/client'
 import {
   Anchor,
   Button,
@@ -9,13 +10,15 @@ import {
   Title,
 } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
+import { useMemo } from 'react'
 
 export const Route = createLazyFileRoute('/login')({
   component: LoginPage,
 })
 
 export function LoginPage() {
+  const navigate = useNavigate()
   const form = useForm({
     mode: 'controlled',
     initialValues: {
@@ -27,6 +30,22 @@ export function LoginPage() {
       password: isNotEmpty('1文字以上入力してください'),
     },
     validateInputOnBlur: true,
+  })
+  const client = useMemo(() => hcWithType('/api'), [])
+
+  const handleLogin = form.onSubmit(async (values) => {
+    const res = await client.auth.login.$post({
+      json: {
+        userId: values.userId,
+        password: values.password,
+      },
+    })
+    if (!res.ok) {
+      form.setFieldValue('password', '')
+      return
+    }
+
+    await navigate({ to: '/' })
   })
 
   return (
@@ -40,7 +59,7 @@ export function LoginPage() {
       </Text>
 
       <Paper withBorder shadow='md' p={30} mt={30} radius='md'>
-        <form>
+        <form onSubmit={handleLogin}>
           <TextInput required label='ID' {...form.getInputProps('userId')} />
           <PasswordInput
             required
@@ -49,7 +68,7 @@ export function LoginPage() {
             mt='md'
           />
 
-          <Button fullWidth mt='xl' disabled={!form.isValid()}>
+          <Button fullWidth mt='xl' disabled={!form.isValid()} type='submit'>
             Log in
           </Button>
         </form>
