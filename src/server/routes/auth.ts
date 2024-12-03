@@ -1,10 +1,12 @@
 import type { User, UserId } from '@/common/model/user'
+import { SESSION_COOKIE_NAME } from '@/server/constant/session'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
 import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
 import { zValidator } from '@hono/zod-validator'
 import argon2 from 'argon2'
 import { Hono } from 'hono'
+import { setCookie } from 'hono/cookie'
 import { z } from 'zod'
 
 const authInputValidator = zValidator(
@@ -37,8 +39,14 @@ const auth = new Hono<AppEnv>()
     }
 
     const session = await c.var.sessionRepository.createSession(userId)
+    setCookie(c, SESSION_COOKIE_NAME, session.id, {
+      httpOnly: true,
+      sameSite: 'strict',
+      // 開発環境で secure を有効化すると cookie が送られなくなるので、本番環境でのみ有効化する
+      secure: import.meta.env.PROD,
+    })
 
-    return c.json(session)
+    return c.body(null, 204)
   })
   .post('/register', authInputValidator, async (c) => {
     const { userId, password } = c.req.valid('json')
