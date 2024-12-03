@@ -3,9 +3,11 @@ import {
   type SessionId,
   SessionSchema,
 } from '@/common/model/session'
+import type { UserId } from '@/common/model/user'
+import { ulid } from 'ulidx'
 
 export interface ISessionRepository {
-  storeSession(session: Session): Promise<void>
+  createSession(userId: UserId): Promise<Session>
   loadSession(sessionId: SessionId): Promise<Session | null>
   removeSession(session: Session): Promise<void>
 }
@@ -13,7 +15,18 @@ export interface ISessionRepository {
 export class KVSessionRepository implements ISessionRepository {
   constructor(private kv: KVNamespace) {}
 
-  async storeSession(session: Session): Promise<void> {
+  async createSession(userId: UserId): Promise<Session> {
+    const sessionId = this.generateSessionId()
+    const session: Session = {
+      id: sessionId,
+      userId,
+    }
+    await this.storeSession(session)
+
+    return session
+  }
+
+  private async storeSession(session: Session): Promise<void> {
     const key = this.formatKey(session.id)
     await this.kv.put(key, JSON.stringify(session))
   }
@@ -40,5 +53,9 @@ export class KVSessionRepository implements ISessionRepository {
 
   private formatKey(sessionId: SessionId): string {
     return `session:${sessionId}`
+  }
+
+  private generateSessionId(): SessionId {
+    return ulid() as SessionId
   }
 }
