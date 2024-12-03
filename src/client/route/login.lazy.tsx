@@ -10,6 +10,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core'
+import { isNotEmpty, useForm } from '@mantine/form'
 import { createLazyFileRoute } from '@tanstack/react-router'
 
 export const Route = createLazyFileRoute('/login')({
@@ -17,6 +18,19 @@ export const Route = createLazyFileRoute('/login')({
 })
 
 export function LoginPage() {
+  const form = useForm({
+    mode: 'controlled',
+    initialValues: {
+      userId: '',
+      password: '',
+    },
+    validate: {
+      userId: isNotEmpty('1文字以上入力してください'),
+      password: isNotEmpty('1文字以上入力してください'),
+    },
+    validateInputOnBlur: true,
+  })
+
   return (
     <Container size={450} my={40}>
       <Title ta='center'>Log in to Scrap</Title>
@@ -28,19 +42,26 @@ export function LoginPage() {
       </Text>
 
       <Paper withBorder shadow='md' p={30} mt={30} radius='md'>
-        <TextInput label='ID' required />
-        <PasswordInput label='パスワード' required mt='md' />
+        <form>
+          <TextInput required label='ID' {...form.getInputProps('userId')} />
+          <PasswordInput
+            required
+            label='パスワード'
+            {...form.getInputProps('password')}
+            mt='md'
+          />
 
-        <Group justify='space-between' mt='lg'>
-          <Checkbox label='IDを記憶する' />
-          <Anchor component='button' size='sm'>
-            パスワードをお忘れですか?
-          </Anchor>
-        </Group>
+          <Group justify='space-between' mt='lg'>
+            <Checkbox label='IDを記憶する' />
+            <Anchor component='button' size='sm'>
+              パスワードをお忘れですか?
+            </Anchor>
+          </Group>
 
-        <Button fullWidth mt='xl'>
-          Log in
-        </Button>
+          <Button fullWidth mt='xl' disabled={!form.isValid()}>
+            Log in
+          </Button>
+        </form>
       </Paper>
     </Container>
   )
