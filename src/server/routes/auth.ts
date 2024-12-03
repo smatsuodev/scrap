@@ -1,7 +1,7 @@
-import type { SessionId } from '@/common/model/session'
 import type { User, UserId } from '@/common/model/user'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
+import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
 import { zValidator } from '@hono/zod-validator'
 import argon2 from 'argon2'
 import { Hono } from 'hono'
@@ -60,26 +60,16 @@ const auth = new Hono<AppEnv>()
 
     return c.json({ id: userId } satisfies User, 201)
   })
-  .post(
-    '/logout',
-    zValidator(
-      'json',
-      z.object({
-        sessionId: z.string().transform((v) => v as SessionId),
-      }),
-    ),
-    async (c) => {
-      const { sessionId } = c.req.valid('json')
+  .post('/logout', sessionAuthMiddleware, async (c) => {
+    const session = c.var.session
+    if (!session) {
+      // 認証 middleware を通しているので、実際は実行されないはず
+      return c.body(null, 401)
+    }
 
-      const session = await c.var.sessionRepository.loadSession(sessionId)
-      if (!session) {
-        return c.body(null, 401)
-      }
+    await c.var.sessionRepository.removeSession(session)
 
-      await c.var.sessionRepository.removeSession(session)
-
-      return c.body(null, 204)
-    },
-  )
+    return c.body(null, 204)
+  })
 
 export default auth
