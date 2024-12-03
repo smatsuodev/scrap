@@ -1,9 +1,7 @@
 import {
   Anchor,
   Button,
-  Checkbox,
   Container,
-  Group,
   Paper,
   PasswordInput,
   Text,
@@ -50,13 +48,6 @@ export function LoginPage() {
             {...form.getInputProps('password')}
             mt='md'
           />
-
-          <Group justify='space-between' mt='lg'>
-            <Checkbox label='IDを記憶する' />
-            <Anchor component='button' size='sm'>
-              パスワードをお忘れですか?
-            </Anchor>
-          </Group>
 
           <Button fullWidth mt='xl' disabled={!form.isValid()}>
             Log in
