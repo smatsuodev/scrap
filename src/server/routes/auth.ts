@@ -4,7 +4,7 @@ import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
 import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
 import { zValidator } from '@hono/zod-validator'
-import argon2 from 'argon2'
+import bcrypt from 'bcryptjs'
 import { Hono } from 'hono'
 import { deleteCookie, setCookie } from 'hono/cookie'
 import { z } from 'zod'
@@ -18,7 +18,7 @@ const authInputValidator = zValidator(
 )
 
 const DUMMY_PASSWORD_HASH =
-  '$argon2id$v=19$m=65536,t=3,p=4$0Q0Ws2400tORdPKxaOIN9g$q3UyPdURWOL4y6sG7jEtkfgxnGPDZ/9WWWNqdpq2Elk' as const
+  '$2a$10$jl8KgQv7CRjy2K5rhoiLmOf6Xa4UTltGzdbn6vYDWGQlSuzXT4CpK'
 
 const auth = new Hono<AppEnv>()
   .basePath('/auth')
@@ -33,7 +33,7 @@ const auth = new Hono<AppEnv>()
      * そのため、ユーザーが存在しない場合でも、ダミーのパスワードハッシュを使って検証を行う
      */
     const passwordHash = user?.password ?? DUMMY_PASSWORD_HASH
-    const isValid = await argon2.verify(passwordHash, password)
+    const isValid = bcrypt.compareSync(password, passwordHash)
     if (!user || !isValid) {
       return c.body(null, 401)
     }
@@ -52,8 +52,7 @@ const auth = new Hono<AppEnv>()
     const { userId, password } = c.req.valid('json')
 
     // login と同様に timing attack によるユーザーの存在の推測を防ぐため、毎回ハッシュを計算する
-    const passwordHash = await argon2.hash(password)
-
+    const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync())
     const existingUser = await c.var.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, userId),
     })
