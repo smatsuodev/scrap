@@ -13,7 +13,7 @@ import {
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute('/_authenticated/')({
   component: IndexPage,
 })
 

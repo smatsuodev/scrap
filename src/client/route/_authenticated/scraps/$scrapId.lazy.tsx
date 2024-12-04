@@ -1,7 +1,7 @@
 import { ScrapViewer } from '@/client/component/ScrapViewer'
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/scraps/$scrapId')({
+export const Route = createLazyFileRoute('/_authenticated/scraps/$scrapId')({
   component: ScrapPage,
 })
 

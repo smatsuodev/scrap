@@ -1,5 +1,6 @@
 import { sessionRepositoryMiddleware } from '@/server/middleware/sessionRepository'
 import scrapFragments from '@/server/routes/scrapFragments'
+import users from '@/server/routes/users'
 import { Hono } from 'hono'
 import type { AppEnv } from './env'
 import { drizzleMiddleware } from './middleware/drizzle'
@@ -28,6 +29,7 @@ const routes = api
   .route('/', fragments)
   .route('/', scrapFragments)
   .route('/', auth)
+  .route('/', users)
 
 export type ApiType = typeof routes
 export default api

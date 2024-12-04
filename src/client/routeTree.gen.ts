@@ -13,122 +13,160 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './route/__root'
+import { Route as RegisterImport } from './route/register'
+import { Route as LoginImport } from './route/login'
+import { Route as AuthenticatedImport } from './route/_authenticated'
 
 // Create Virtual Routes
 
-const RegisterLazyImport = createFileRoute('/register')()
-const LoginLazyImport = createFileRoute('/login')()
-const IndexLazyImport = createFileRoute('/')()
-const ScrapsScrapIdLazyImport = createFileRoute('/scraps/$scrapId')()
+const AuthenticatedIndexLazyImport = createFileRoute('/_authenticated/')()
+const AuthenticatedScrapsScrapIdLazyImport = createFileRoute(
+  '/_authenticated/scraps/$scrapId',
+)()
 
 // Create/Update Routes
 
-const RegisterLazyRoute = RegisterLazyImport.update({
+const RegisterRoute = RegisterImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./route/register.lazy').then((d) => d.Route))
+} as any)
 
-const LoginLazyRoute = LoginLazyImport.update({
+const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./route/login.lazy').then((d) => d.Route))
+} as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedIndexLazyRoute = AuthenticatedIndexLazyImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./route/index.lazy').then((d) => d.Route))
-
-const ScrapsScrapIdLazyRoute = ScrapsScrapIdLazyImport.update({
-  id: '/scraps/$scrapId',
-  path: '/scraps/$scrapId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any).lazy(() =>
-  import('./route/scraps/$scrapId.lazy').then((d) => d.Route),
+  import('./route/_authenticated/index.lazy').then((d) => d.Route),
 )
+
+const AuthenticatedScrapsScrapIdLazyRoute =
+  AuthenticatedScrapsScrapIdLazyImport.update({
+    id: '/scraps/$scrapId',
+    path: '/scraps/$scrapId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any).lazy(() =>
+    import('./route/_authenticated/scraps/$scrapId.lazy').then((d) => d.Route),
+  )
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LoginLazyImport
+      preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
-      preLoaderRoute: typeof RegisterLazyImport
+      preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
-    '/scraps/$scrapId': {
-      id: '/scraps/$scrapId'
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexLazyImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/scraps/$scrapId': {
+      id: '/_authenticated/scraps/$scrapId'
       path: '/scraps/$scrapId'
       fullPath: '/scraps/$scrapId'
-      preLoaderRoute: typeof ScrapsScrapIdLazyImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedScrapsScrapIdLazyImport
+      parentRoute: typeof AuthenticatedImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedIndexLazyRoute: typeof AuthenticatedIndexLazyRoute
+  AuthenticatedScrapsScrapIdLazyRoute: typeof AuthenticatedScrapsScrapIdLazyRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedIndexLazyRoute: AuthenticatedIndexLazyRoute,
+  AuthenticatedScrapsScrapIdLazyRoute: AuthenticatedScrapsScrapIdLazyRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/login': typeof LoginLazyRoute
-  '/register': typeof RegisterLazyRoute
-  '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/': typeof AuthenticatedIndexLazyRoute
+  '/scraps/$scrapId': typeof AuthenticatedScrapsScrapIdLazyRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/login': typeof LoginLazyRoute
-  '/register': typeof RegisterLazyRoute
-  '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/': typeof AuthenticatedIndexLazyRoute
+  '/scraps/$scrapId': typeof AuthenticatedScrapsScrapIdLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
-  '/login': typeof LoginLazyRoute
-  '/register': typeof RegisterLazyRoute
-  '/scraps/$scrapId': typeof ScrapsScrapIdLazyRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/_authenticated/': typeof AuthenticatedIndexLazyRoute
+  '/_authenticated/scraps/$scrapId': typeof AuthenticatedScrapsScrapIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/scraps/$scrapId'
+  fullPaths: '' | '/login' | '/register' | '/' | '/scraps/$scrapId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/scraps/$scrapId'
-  id: '__root__' | '/' | '/login' | '/register' | '/scraps/$scrapId'
+  to: '/login' | '/register' | '/' | '/scraps/$scrapId'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/login'
+    | '/register'
+    | '/_authenticated/'
+    | '/_authenticated/scraps/$scrapId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
-  LoginLazyRoute: typeof LoginLazyRoute
-  RegisterLazyRoute: typeof RegisterLazyRoute
-  ScrapsScrapIdLazyRoute: typeof ScrapsScrapIdLazyRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
-  LoginLazyRoute: LoginLazyRoute,
-  RegisterLazyRoute: RegisterLazyRoute,
-  ScrapsScrapIdLazyRoute: ScrapsScrapIdLazyRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 
 export const routeTree = rootRoute
@@ -143,23 +181,31 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
+        "/_authenticated",
         "/login",
-        "/register",
-        "/scraps/$scrapId"
+        "/register"
       ]
     },
-    "/": {
-      "filePath": "index.lazy.tsx"
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/",
+        "/_authenticated/scraps/$scrapId"
+      ]
     },
     "/login": {
-      "filePath": "login.lazy.tsx"
+      "filePath": "login.tsx"
     },
     "/register": {
-      "filePath": "register.lazy.tsx"
+      "filePath": "register.tsx"
     },
-    "/scraps/$scrapId": {
-      "filePath": "scraps/$scrapId.lazy.tsx"
+    "/_authenticated/": {
+      "filePath": "_authenticated/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/scraps/$scrapId": {
+      "filePath": "_authenticated/scraps/$scrapId.lazy.tsx",
+      "parent": "/_authenticated"
     }
   }
 }
