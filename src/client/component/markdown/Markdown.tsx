@@ -1,5 +1,5 @@
 import { RichCode } from '@/client/component/markdown/RichCode'
-import { Code, List, Text, Title } from '@mantine/core'
+import { Code, Image, List, Text, Title } from '@mantine/core'
 import type { Root, RootContent } from 'mdast'
 import { useEffect, useState } from 'react'
 import { remark } from 'remark'
@@ -13,7 +13,10 @@ export function Markdown({ markdown }: MarkdownProps) {
   const [rootNode, setRootNode] = useState<Root>()
 
   useEffect(() => {
-    parseMarkdown(markdown).then(setRootNode, console.error)
+    parseMarkdown(markdown).then((nodes) => {
+      setRootNode(nodes)
+      console.dir(nodes)
+    }, console.error)
   }, [markdown])
 
   if (!rootNode) {
@@ -75,6 +78,16 @@ function NodeRenderer({ nodes }: NodeRendererProps) {
             case 'code': {
               return <RichCode lang={node.lang ?? ''} code={node.value} />
             }
+
+            case 'image':
+              return (
+                <Image
+                  w='auto'
+                  fit='contain'
+                  src={node.url}
+                  alt={node.alt ?? ''}
+                />
+              )
 
             default:
               return undefined
