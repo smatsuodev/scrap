@@ -2,13 +2,17 @@ import { CreateScrapButton } from '@/client/component/CreateScrapButton'
 import { HomeButton } from '@/client/component/HomeButton'
 import { TimerButton } from '@/client/component/timer/TimerButton'
 import UserMenu from '@/client/component/user/UserMenu'
-import { currentUser } from '@/client/lib/auth'
+import type { ILoginUserRepository } from '@/client/repository/loginUser'
 import { AppShell, Container, Group } from '@mantine/core'
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
-export const Route = createRootRoute({
-  loader: () => currentUser(),
+type RouterContext = {
+  loginUserRepository: ILoginUserRepository
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
+  loader: ({ context }) => context.loginUserRepository.getUser(),
   component: RootPage,
 })
 

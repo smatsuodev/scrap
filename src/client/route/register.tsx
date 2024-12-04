@@ -1,12 +1,11 @@
 import RegisterForm from '@/client/component/auth/RegisterForm'
 import RegisterHeader from '@/client/component/auth/RegisterHeader'
-import { isAuthenticated } from '@/client/lib/auth'
 import { Container, Paper } from '@mantine/core'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/register')({
-  beforeLoad: async () => {
-    if (await isAuthenticated()) {
+  beforeLoad: async ({ context }) => {
+    if (await context.loginUserRepository.getUser()) {
       throw redirect({
         to: '/',
       })

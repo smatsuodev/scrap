@@ -2,7 +2,9 @@ import '@mantine/core/styles.css'
 import '@mantine/dates/styles.css'
 import '@mantine/notifications/styles.css'
 import './index.css'
+import { LoginUserRepository } from '@/client/repository/loginUser'
 import { routeTree } from '@/client/routeTree.gen'
+import { hcWithType } from '@/server/client'
 import { MantineProvider, createTheme } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
@@ -10,7 +12,14 @@ import { createRoot } from 'react-dom/client'
 
 const theme = createTheme({})
 
-const router = createRouter({ routeTree })
+const apiClient = hcWithType('/api')
+
+const router = createRouter({
+  routeTree,
+  context: {
+    loginUserRepository: new LoginUserRepository(apiClient),
+  },
+})
 
 declare module '@tanstack/react-router' {
   interface Register {
