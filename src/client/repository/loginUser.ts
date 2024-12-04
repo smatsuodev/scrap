@@ -1,14 +1,15 @@
 import type { User } from '@/common/model/user'
-import { hcWithType } from '@/server/client'
+import type { Client } from '@/server/client'
 
 export interface ILoginUserRepository {
   getUser(): Promise<User | null>
 }
 
 export class LoginUserRepository implements ILoginUserRepository {
+  constructor(private client: Client) {}
+
   async getUser(): Promise<User | null> {
-    const client = hcWithType('/api')
-    const res = await client.users.me.$get()
+    const res = await this.client.users.me.$get()
     if (!res.ok) {
       return null
     }

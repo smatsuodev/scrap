@@ -3,11 +3,16 @@ import { HomeButton } from '@/client/component/HomeButton'
 import { TimerButton } from '@/client/component/TimerButton'
 import UserMenu from '@/client/component/user/UserMenu'
 import { currentUser } from '@/client/lib/auth'
+import type { ILoginUserRepository } from '@/client/repository/loginUser'
 import { AppShell, Container, Group } from '@mantine/core'
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
-export const Route = createRootRoute({
+type RouterContext = {
+  loginUserRepository: ILoginUserRepository
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   loader: () => currentUser(),
   component: RootPage,
 })
