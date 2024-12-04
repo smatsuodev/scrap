@@ -8,7 +8,7 @@ const users = new Hono<AppEnv>()
   .get('/me', sessionAuthMiddleware, async (c) => {
     const session = c.var.session
     if (!session) {
-      return c.body(null, 401)
+      return c.json(null, 401)
     }
 
     const user = await c.var.db.query.users.findFirst({
@@ -16,7 +16,7 @@ const users = new Hono<AppEnv>()
       columns: { id: true },
     })
     if (!user) {
-      return c.body(null, 401)
+      return c.json(null, 401)
     }
 
     return c.json({ id: user.id } satisfies User)
