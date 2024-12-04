@@ -5,7 +5,7 @@ import { notifications } from '@mantine/notifications'
 import { useNavigate } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const [loading, setLoading] = useState<boolean>(false)
 
   const navigate = useNavigate()
@@ -23,38 +23,45 @@ export default function LoginForm() {
   })
   const client = useMemo(() => hcWithType('/api'), [])
 
-  const handleLogin = form.onSubmit(async (values) => {
+  const handleRegister = form.onSubmit(async (values) => {
     setLoading(true)
 
-    const res = await client.auth.login.$post({
+    const res = await client.auth.register.$post({
       json: {
         userId: values.userId,
         password: values.password,
       },
     })
     if (!res.ok) {
-      notifications.show({
-        color: 'red',
-        title: 'ログインに失敗しました',
-        message: 'ID またはパスワードが正しくありません',
-      })
-      form.setFieldValue('password', '')
+      const showError = (message: string) =>
+        notifications.show({
+          color: 'red',
+          title: '新規登録に失敗しました',
+          message,
+        })
+      if (res.status === 409) {
+        showError('ID が既に使用されています')
+      } else {
+        showError('入力内容を確認してください')
+      }
+
+      form.reset()
       setLoading(false)
       return
     }
 
     notifications.show({
       color: 'blue',
-      title: 'ログインしました',
-      message: 'トップページに遷移します',
+      title: '新規登録が完了しました',
+      message: 'ログインしてください',
     })
 
     // 遷移するまで loading は解除しない
-    await navigate({ to: '/' })
+    await navigate({ to: '/login' })
   })
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleRegister}>
       <TextInput required label='ID' {...form.getInputProps('userId')} />
       <PasswordInput
         required
@@ -70,7 +77,7 @@ export default function LoginForm() {
         disabled={!form.isValid()}
         loading={loading}
       >
-        ログイン
+        新規登録
       </Button>
     </form>
   )
