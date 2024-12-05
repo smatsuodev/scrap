@@ -13,10 +13,7 @@ export function Markdown({ markdown }: MarkdownProps) {
   const [rootNode, setRootNode] = useState<Root>()
 
   useEffect(() => {
-    parseMarkdown(markdown).then((nodes) => {
-      setRootNode(nodes)
-      console.dir(nodes)
-    }, console.error)
+    parseMarkdown(markdown).then(setRootNode, console.error)
   }, [markdown])
 
   if (!rootNode) {
