@@ -81,6 +81,8 @@ export default defineConfig(({ mode, command }) => {
         ? TanStackRouterVite(commonTanStackRouterOptions)
         : null,
     ].filter(Boolean),
-    resolve: commonAliasOptions,
+    resolve: {
+      alias: commonAliasOptions,
+    },
   }
 })
