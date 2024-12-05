@@ -24,7 +24,7 @@ export default function LoginForm() {
       password: '',
     },
     validate: zodResolver(formSchema),
-    validateInputOnBlur: true,
+    validateInputOnChange: true,
   })
   const client = useMemo(() => hcWithType('/api'), [])
 
