@@ -13,7 +13,10 @@ export interface ISessionRepository {
 }
 
 export class KVSessionRepository implements ISessionRepository {
-  constructor(private kv: KVNamespace) {}
+  constructor(
+    private kv: KVNamespace,
+    private ttl?: number,
+  ) {}
 
   async createSession(userId: UserId): Promise<Session> {
     const sessionId = this.generateSessionId()
@@ -28,7 +31,8 @@ export class KVSessionRepository implements ISessionRepository {
 
   private async storeSession(session: Session): Promise<void> {
     const key = this.formatKey(session.id)
-    await this.kv.put(key, JSON.stringify(session))
+    const options = this.ttl ? { expirationTtl: this.ttl } : undefined
+    await this.kv.put(key, JSON.stringify(session), options)
   }
 
   async loadSession(sessionId: SessionId): Promise<Session | null> {
