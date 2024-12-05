@@ -10,4 +10,4 @@ export interface Fragment {
   content: string
 }
 
-export type FragmentInput = Omit<Fragment, 'id'>
+export type FragmentInput = Omit<Fragment, 'id' | 'scrapId' | 'authorId'>
