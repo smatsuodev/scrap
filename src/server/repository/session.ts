@@ -31,7 +31,7 @@ export class KVSessionRepository implements ISessionRepository {
 
   private async storeSession(session: Session): Promise<void> {
     const key = this.formatKey(session.id)
-    const options = this.ttl ? { expirationTtl: this.ttl } : undefined
+    const options = this.ttl ? { expirationTtl: this.ttl } : {}
     await this.kv.put(key, JSON.stringify(session), options)
   }
 
