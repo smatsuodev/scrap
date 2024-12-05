@@ -1,4 +1,9 @@
-import type { User, UserId } from '@/common/model/user'
+import {
+  type User,
+  type UserId,
+  userIdSchema,
+  userPasswordSchema,
+} from '@/common/model/user'
 import { SESSION_COOKIE_NAME, SESSION_TTL } from '@/server/constant/session'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
@@ -12,8 +17,8 @@ import { z } from 'zod'
 const authInputValidator = zValidator(
   'json',
   z.object({
-    userId: z.string().transform((v) => v as UserId),
-    password: z.string(),
+    userId: userIdSchema.transform((v) => v as UserId),
+    password: userPasswordSchema,
   }),
 )
 
