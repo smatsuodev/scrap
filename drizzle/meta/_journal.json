@@ -64,6 +64,13 @@
       "when": 1733418611394,
       "tag": "0008_lean_spencer_smythe",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1733440947220,
+      "tag": "0009_strong_firebird",
+      "breakpoints": true
     }
   ]
 }
