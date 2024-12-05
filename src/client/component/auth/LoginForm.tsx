@@ -19,7 +19,7 @@ export default function LoginForm() {
       userId: isNotEmpty('1文字以上入力してください'),
       password: isNotEmpty('1文字以上入力してください'),
     },
-    validateInputOnChange: true,
+    validateInputOnBlur: true,
   })
   const client = useMemo(() => hcWithType('/api'), [])
 
