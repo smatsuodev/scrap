@@ -1,6 +1,6 @@
 import { CreateScrapButton } from '@/client/component/CreateScrapButton'
 import { HomeButton } from '@/client/component/HomeButton'
-import { TimerButton } from '@/client/component/TimerButton'
+import { TimerButton } from '@/client/component/timer/TimerButton'
 import UserMenu from '@/client/component/user/UserMenu'
 import type { ILoginUserRepository } from '@/client/repository/loginUser'
 import { AppShell, Container, Group } from '@mantine/core'

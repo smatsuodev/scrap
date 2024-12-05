@@ -1,5 +1,5 @@
 import build from '@hono/vite-build/cloudflare-pages'
-import devServer from '@hono/vite-dev-server'
+import devServer, { defaultOptions } from '@hono/vite-dev-server'
 import adapter from '@hono/vite-dev-server/cloudflare'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { type AliasOptions, type Plugin, defineConfig } from 'vite'
@@ -74,6 +74,7 @@ export default defineConfig(({ mode, command }) => {
       }),
       devServer({
         adapter,
+        exclude: [/^\/src\/.*\.worker\.ts/, ...defaultOptions.exclude],
         entry: 'src/server/index.tsx',
       }),
       command === 'serve'
