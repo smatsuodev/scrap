@@ -1,24 +1,29 @@
+import { userIdSchema, userPasswordSchema } from '@/common/model/user'
 import { hcWithType } from '@/server/client'
 import { Button, PasswordInput, TextInput } from '@mantine/core'
-import { isNotEmpty, useForm } from '@mantine/form'
+import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { useNavigate } from '@tanstack/react-router'
+import { zodResolver } from 'mantine-form-zod-resolver'
 import { useMemo, useState } from 'react'
+import { z } from 'zod'
 
 export default function RegisterForm() {
   const [loading, setLoading] = useState<boolean>(false)
-
   const navigate = useNavigate()
-  const form = useForm({
+
+  const formSchema = z.object({
+    userId: userIdSchema,
+    password: userPasswordSchema,
+  })
+  type FormValues = z.infer<typeof formSchema>
+  const form = useForm<FormValues>({
     mode: 'controlled',
     initialValues: {
       userId: '',
       password: '',
     },
-    validate: {
-      userId: isNotEmpty('1文字以上入力してください'),
-      password: isNotEmpty('1文字以上入力してください'),
-    },
+    validate: zodResolver(formSchema),
     validateInputOnBlur: true,
   })
   const client = useMemo(() => hcWithType('/api'), [])
