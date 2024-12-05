@@ -10,7 +10,6 @@ export const fragments = sqliteTable('fragments', {
     .notNull()
     .references(() => scraps.id),
 })
-
 export const fragmentsRelations = relations(fragments, ({ one }) => ({
   scrap: one(scraps, {
     fields: [fragments.scrapId],
@@ -22,13 +21,25 @@ export const scraps = sqliteTable('scraps', {
   id: text().primaryKey(),
   title: text().notNull(),
   updatedAt: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+  ownerId: text('owner_id')
+    .$type<UserId>()
+    .notNull()
+    .references(() => users.id, {
+      onDelete: 'cascade',
+    }),
 })
-
-export const scrapsRelations = relations(scraps, ({ many }) => ({
+export const scrapsRelations = relations(scraps, ({ one, many }) => ({
   fragments: many(fragments),
+  owner: one(users, {
+    fields: [scraps.ownerId],
+    references: [users.id],
+  }),
 }))
 
 export const users = sqliteTable('users', {
   id: text().$type<UserId>().primaryKey(),
   password: text().notNull(),
 })
+export const usersRelations = relations(users, ({ many }) => ({
+  scraps: many(scraps),
+}))
