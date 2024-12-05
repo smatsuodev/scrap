@@ -9,11 +9,19 @@ export const fragments = sqliteTable('fragments', {
   scrapId: text('scrap_id')
     .notNull()
     .references(() => scraps.id),
+  authorId: text('author_id')
+    .$type<UserId>()
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
 })
 export const fragmentsRelations = relations(fragments, ({ one }) => ({
   scrap: one(scraps, {
     fields: [fragments.scrapId],
     references: [scraps.id],
+  }),
+  author: one(users, {
+    fields: [fragments.authorId],
+    references: [users.id],
   }),
 }))
 
