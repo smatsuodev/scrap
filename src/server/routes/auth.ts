@@ -1,5 +1,5 @@
 import type { User, UserId } from '@/common/model/user'
-import { SESSION_COOKIE_NAME } from '@/server/constant/session'
+import { SESSION_COOKIE_NAME, SESSION_TTL } from '@/server/constant/session'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
 import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
@@ -44,6 +44,7 @@ const auth = new Hono<AppEnv>()
       sameSite: 'strict',
       // 開発環境で secure を有効化すると cookie が送られなくなるので、本番環境でのみ有効化する
       secure: import.meta.env.PROD,
+      maxAge: SESSION_TTL,
     })
 
     return c.body(null, 204)
