@@ -17,8 +17,7 @@ import { z } from 'zod'
 const DUMMY_PASSWORD_HASH =
   '$2a$10$jl8KgQv7CRjy2K5rhoiLmOf6Xa4UTltGzdbn6vYDWGQlSuzXT4CpK'
 
-const auth = new Hono<AppEnv>()
-  .basePath('/auth')
+const passwordAuth = new Hono<AppEnv>()
   .post(
     '/login',
     zValidator(
@@ -101,4 +100,4 @@ const auth = new Hono<AppEnv>()
     return c.body(null, 204)
   })
 
-export default auth
+export default passwordAuth
