@@ -20,7 +20,6 @@ const DUMMY_PASSWORD_HASH =
 const auth = honoFactory
   .createApp()
   .basePath('/auth')
-  .use(sessionAuthMiddleware)
   .post(
     '/login',
     zValidator(
