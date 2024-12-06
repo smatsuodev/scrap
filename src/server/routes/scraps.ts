@@ -1,8 +1,10 @@
+import type { Scrap } from '@/common/model/scrap'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
 import { zValidator } from '@hono/zod-validator'
 import { desc, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import { ulid } from 'ulidx'
 import { z } from 'zod'
 
@@ -26,11 +28,31 @@ const scraps = new Hono<AppEnv>()
     ),
     async (c) => {
       const { title } = c.req.valid('json')
-      const scrap = {
-        id: ulid(),
-        title,
+      const session = c.var.session
+      if (!session) {
+        throw new HTTPException(401)
       }
-      await c.var.db.insert(schema.scraps).values(scrap)
+
+      /**
+       * 1行の挿入でも array で返ってきてしまう
+       * refs: https://github.com/drizzle-team/drizzle-orm/issues/1237
+       */
+      const [row] = await c.var.db
+        .insert(schema.scraps)
+        .values({
+          id: ulid(),
+          title,
+          ownerId: session.userId,
+        })
+        .returning()
+      if (!row) {
+        throw new HTTPException(500)
+      }
+
+      const scrap: Scrap = {
+        ...row,
+        fragments: [],
+      }
       return c.json(scrap, 201)
     },
   )
