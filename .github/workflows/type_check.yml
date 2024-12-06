@@ -10,7 +10,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '>=22.11'
           cache: yarn
           cache-dependency-path: yarn.lock
       - run: yarn install
