@@ -11,6 +11,7 @@ import { honoFactory } from '@/server/utility/factory'
 import { zValidator } from '@hono/zod-validator'
 import bcrypt from 'bcryptjs'
 import { deleteCookie, setCookie } from 'hono/cookie'
+import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
 
 const DUMMY_PASSWORD_HASH =
@@ -45,7 +46,7 @@ const auth = honoFactory
       const passwordHash = user?.password ?? DUMMY_PASSWORD_HASH
       const isValid = bcrypt.compareSync(password, passwordHash)
       if (!user || !isValid) {
-        return c.body(null, 401)
+        throw new HTTPException(401)
       }
 
       const session = await c.var.sessionRepository.createSession(userId)
@@ -78,7 +79,7 @@ const auth = honoFactory
         where: (users, { eq }) => eq(users.id, userId),
       })
       if (existingUser) {
-        return c.body(null, 409) // Conflict
+        return c.json(null, 409) // Conflict
       }
 
       await c.var.db.insert(schema.users).values({

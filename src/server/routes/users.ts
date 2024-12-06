@@ -1,6 +1,7 @@
 import type { User } from '@/common/model/user'
 import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
 import { honoFactory } from '@/server/utility/factory'
+import { HTTPException } from 'hono/http-exception'
 
 const users = honoFactory
   .createApp()
@@ -14,7 +15,7 @@ const users = honoFactory
       columns: { id: true },
     })
     if (!user) {
-      return c.json(null, 401)
+      throw new HTTPException(401)
     }
 
     return c.json({ id: user.id } satisfies User)
