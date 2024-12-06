@@ -7,8 +7,8 @@ import { useMemo, useState } from 'react'
 
 export default function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false)
-
   const navigate = useNavigate()
+
   const form = useForm({
     mode: 'controlled',
     initialValues: {
