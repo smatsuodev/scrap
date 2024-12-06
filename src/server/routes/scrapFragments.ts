@@ -1,8 +1,8 @@
 import type { Fragment } from '@/common/model/fragment'
 import * as schema from '@/server/db/schema'
-import type { AppEnv } from '@/server/env'
+import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
+import { honoFactory } from '@/server/utility/factory'
 import { zValidator } from '@hono/zod-validator'
-import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
 
@@ -13,8 +13,10 @@ const scrapIdParamValidator = zValidator(
   }),
 )
 
-const scrapFragments = new Hono<AppEnv>()
+const scrapFragments = honoFactory
+  .createApp()
   .basePath('/scraps/:scrapId/fragments')
+  .use(sessionAuthMiddleware)
   .get('/', scrapIdParamValidator, async (c) => {
     const { scrapId } = c.req.valid('param')
     const fragments = await c.var.db.query.fragments.findMany({
@@ -35,9 +37,6 @@ const scrapFragments = new Hono<AppEnv>()
       const { scrapId } = c.req.valid('param')
       const { content } = c.req.valid('json')
       const session = c.var.session
-      if (!session) {
-        throw new HTTPException(401)
-      }
 
       const [row] = await c.var.db
         .insert(schema.fragments)

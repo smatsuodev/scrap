@@ -6,19 +6,20 @@ import {
 } from '@/common/model/user'
 import { SESSION_COOKIE_NAME, SESSION_TTL } from '@/server/constant/session'
 import * as schema from '@/server/db/schema'
-import type { AppEnv } from '@/server/env'
 import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
+import { honoFactory } from '@/server/utility/factory'
 import { zValidator } from '@hono/zod-validator'
 import bcrypt from 'bcryptjs'
-import { Hono } from 'hono'
 import { deleteCookie, setCookie } from 'hono/cookie'
 import { z } from 'zod'
 
 const DUMMY_PASSWORD_HASH =
   '$2a$10$jl8KgQv7CRjy2K5rhoiLmOf6Xa4UTltGzdbn6vYDWGQlSuzXT4CpK'
 
-const auth = new Hono<AppEnv>()
+const auth = honoFactory
+  .createApp()
   .basePath('/auth')
+  .use(sessionAuthMiddleware)
   .post(
     '/login',
     zValidator(
@@ -90,10 +91,6 @@ const auth = new Hono<AppEnv>()
   )
   .post('/logout', sessionAuthMiddleware, async (c) => {
     const session = c.var.session
-    if (!session) {
-      // 認証 middleware を通しているので、実際は実行されないはず
-      return c.body(null, 401)
-    }
 
     await c.var.sessionRepository.removeSession(session)
     deleteCookie(c, SESSION_COOKIE_NAME)

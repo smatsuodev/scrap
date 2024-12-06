@@ -1,15 +1,17 @@
 import type { Scrap } from '@/common/model/scrap'
 import * as schema from '@/server/db/schema'
-import type { AppEnv } from '@/server/env'
+import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
+import { honoFactory } from '@/server/utility/factory'
 import { zValidator } from '@hono/zod-validator'
 import { desc, eq } from 'drizzle-orm'
-import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { ulid } from 'ulidx'
 import { z } from 'zod'
 
-const scraps = new Hono<AppEnv>()
+const scraps = honoFactory
+  .createApp()
   .basePath('/scraps')
+  .use(sessionAuthMiddleware)
   .get('/', async (c) => {
     const scraps = await c.var.db.query.scraps.findMany({
       with: { fragments: true },
@@ -29,9 +31,6 @@ const scraps = new Hono<AppEnv>()
     async (c) => {
       const { title } = c.req.valid('json')
       const session = c.var.session
-      if (!session) {
-        throw new HTTPException(401)
-      }
 
       /**
        * 1行の挿入でも array で返ってきてしまう
