@@ -1711,10 +1711,10 @@ drizzle-kit@^0.26.2:
     esbuild "^0.19.7"
     esbuild-register "^3.5.0"
 
-drizzle-orm@^0.35.3:
-  version "0.35.3"
-  resolved "https://registry.yarnpkg.com/drizzle-orm/-/drizzle-orm-0.35.3.tgz#5c9834e167353e82ded46767cb370447d701e641"
-  integrity sha512-Uv6N+b36x4BaZlxc96e+ag7RnMapBLGhc4SSi2F7RDwqYJipWjaU/P68RUp1FbW9r+mxoDp8nMz2Eece8PJxfA==
+drizzle-orm@^0.37.0:
+  version "0.37.0"
+  resolved "https://registry.yarnpkg.com/drizzle-orm/-/drizzle-orm-0.37.0.tgz#313c508164922cf99cee5fa17381c503035538fa"
+  integrity sha512-AsCNACQ/T2CyZUkrBRUqFT2ibHJ9ZHz3+lzYJFFn3hnj7ylIeItMz5kacRG89uSE74nXYShqehr6u+6ks4JR1A==
 
 electron-to-chromium@^1.5.41:
   version "1.5.47"
