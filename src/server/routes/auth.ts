@@ -24,9 +24,11 @@ const auth = new Hono<AppEnv>()
     zValidator(
       'json',
       z.object({
-        userId: z.string().transform((v) => v as UserId),
-        // 誤って両端に空白を含めてもログインできたほうが便利なので、最初に trim する
-        password: z.string().trim(),
+        userId: z
+          .string()
+          .min(1)
+          .transform((v) => v as UserId),
+        password: z.string().min(1),
       }),
     ),
     async (c) => {
