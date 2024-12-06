@@ -20,7 +20,7 @@ export type GenerateOptionsInput = {
 
 export type VerifyInput = {
   userId: UserId
-  body: RegistrationResponseJSON
+  registrationResponse: RegistrationResponseJSON
 }
 
 export interface IPasskeyRegistrationService {
@@ -60,9 +60,8 @@ export class PasskeyRegistrationService implements IPasskeyRegistrationService {
         })),
         authenticatorSelection: {
           // Defaults
-          residentKey: 'preferred',
+          residentKey: 'required',
           userVerification: 'preferred',
-          // Optional
           authenticatorAttachment: 'platform',
         },
       })
@@ -89,10 +88,11 @@ export class PasskeyRegistrationService implements IPasskeyRegistrationService {
     }
 
     const verification = await verifyRegistrationResponse({
-      response: input.body,
+      response: input.registrationResponse,
       expectedChallenge: registrationSession.challenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
+      requireUserVerification: false,
     })
 
     const { verified } = verification
