@@ -1,7 +1,9 @@
+import type { Fragment } from '@/common/model/fragment'
 import * as schema from '@/server/db/schema'
 import type { AppEnv } from '@/server/env'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import { z } from 'zod'
 
 const scrapIdParamValidator = zValidator(
@@ -32,11 +34,26 @@ const scrapFragments = new Hono<AppEnv>()
     async (c) => {
       const { scrapId } = c.req.valid('param')
       const { content } = c.req.valid('json')
-      const fragment = {
-        scrapId,
-        content,
+      const session = c.var.session
+      if (!session) {
+        throw new HTTPException(401)
       }
-      await c.var.db.insert(schema.fragments).values(fragment)
+
+      const [row] = await c.var.db
+        .insert(schema.fragments)
+        .values({
+          scrapId,
+          content,
+          authorId: session.userId,
+        })
+        .returning()
+      if (!row) {
+        throw new HTTPException(500)
+      }
+
+      const fragment: Fragment = {
+        ...row,
+      }
       return c.json(fragment, 201)
     },
   )

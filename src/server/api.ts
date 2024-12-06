@@ -1,3 +1,4 @@
+import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
 import { sessionRepositoryMiddleware } from '@/server/middleware/sessionRepository'
 import scrapFragments from '@/server/routes/scrapFragments'
 import users from '@/server/routes/users'
@@ -9,8 +10,8 @@ import fragments from './routes/fragments'
 import scraps from './routes/scraps'
 
 const api = new Hono<AppEnv>()
-
-api.use(drizzleMiddleware).use(sessionRepositoryMiddleware)
+  .use(drizzleMiddleware)
+  .use(sessionRepositoryMiddleware)
 
 /**
  * scraps などは /scraps などの basePath が指定されているので、/ に連結する
@@ -24,12 +25,14 @@ api.use(drizzleMiddleware).use(sessionRepositoryMiddleware)
  *   (`.basePath('/v1')` のように設定するのは全然あり)
  * - `hc` で参照する際に `client.api.scraps` のように書くのが手間
  */
-const routes = api
+const protectedApi = new Hono<AppEnv>()
+  .use(sessionAuthMiddleware)
   .route('/', scraps)
   .route('/', fragments)
   .route('/', scrapFragments)
-  .route('/', auth)
   .route('/', users)
+
+const routes = api.route('/', auth).route('/', protectedApi)
 
 export type ApiType = typeof routes
 export default api
