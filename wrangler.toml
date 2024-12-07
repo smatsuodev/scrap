@@ -3,6 +3,9 @@ compatibility_date = "2024-10-21"
 pages_build_output_dir = "./dist"
 compatibility_flags = [ "nodejs_compat" ]
 
+[vars]
+BUN_VERSION = '1.1.38'
+
 [[kv_namespaces]]
 binding = "SESSION_KV"
 id = "c05d577e52254456931cef1e83fb0cf4"
