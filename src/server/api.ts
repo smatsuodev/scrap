@@ -1,17 +1,9 @@
-import { sessionAuthMiddleware } from '@/server/middleware/sessionAuth'
-import { sessionRepositoryMiddleware } from '@/server/middleware/sessionRepository'
 import scrapFragments from '@/server/routes/scrapFragments'
 import users from '@/server/routes/users'
 import { Hono } from 'hono'
-import type { AppEnv } from './env'
-import { drizzleMiddleware } from './middleware/drizzle'
 import auth from './routes/auth'
 import fragments from './routes/fragments'
 import scraps from './routes/scraps'
-
-const api = new Hono<AppEnv>()
-  .use(drizzleMiddleware)
-  .use(sessionRepositoryMiddleware)
 
 /**
  * scraps などは /scraps などの basePath が指定されているので、/ に連結する
@@ -24,15 +16,23 @@ const api = new Hono<AppEnv>()
  * - /api/v1/ のようなルートを作れなくなる
  *   (`.basePath('/v1')` のように設定するのは全然あり)
  * - `hc` で参照する際に `client.api.scraps` のように書くのが手間
+ *
+ * ===
+ * utility の factory はあえて使っていない
+ * なぜなら、子の app を factory で生成するので、依存オブジェクトの初期化をする middleware が複数回呼ばれてしまうから
+ * (複数回呼んでも問題はないが、オーバーヘッドを避けたい)
+ *
+ * ===
+ * 認証 middleware はここではなく、子の app で設定する
+ * そうすると、実装時に拡張された Env が使える
+ * refs: https://hono.dev/docs/guides/middleware#extending-the-context-in-middleware
  */
-const protectedApi = new Hono<AppEnv>()
-  .use(sessionAuthMiddleware)
+const api = new Hono()
+  .route('/', auth)
   .route('/', scraps)
   .route('/', fragments)
   .route('/', scrapFragments)
   .route('/', users)
 
-const routes = api.route('/', auth).route('/', protectedApi)
-
-export type ApiType = typeof routes
+export type ApiType = typeof api
 export default api
