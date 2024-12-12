@@ -5,10 +5,7 @@ import type { DrizzleD1Database } from 'drizzle-orm/d1'
 
 export interface IPasskeyRepository {
   findByUserId(userId: UserId): Promise<Passkey[]>
-  findByWebauthnUserIdAndUserId(
-    webauthnUserId: Passkey['webauthnUserId'],
-    userId: UserId,
-  ): Promise<Passkey | null>
+  find(credentialId: Passkey['id']): Promise<Passkey | null>
   save(passkey: Passkey): Promise<void>
 }
 
@@ -31,16 +28,9 @@ export class PasskeyRepository implements IPasskeyRepository {
     )
   }
 
-  async findByWebauthnUserIdAndUserId(
-    webauthnUserId: Passkey['webauthnUserId'],
-    userId: UserId,
-  ) {
+  async find(credentialId: Passkey['id']) {
     const passkey = await this.db.query.passkeys.findFirst({
-      where: (passkeys, { and, eq }) =>
-        and(
-          eq(passkeys.webauthnUserId, webauthnUserId),
-          eq(passkeys.userId, userId),
-        ),
+      where: (passkeys, { eq }) => eq(passkeys.id, credentialId),
       with: { user: true },
     })
     if (!passkey) return null
