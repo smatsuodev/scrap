@@ -1,7 +1,4 @@
-import type { UserId } from '@/common/model/user'
 import type { IPasskeyRepository } from '@/server/repository/passkey'
-import type { IPasskeyAuthenticationSessionRepository } from '@/server/repository/passkey/authenticationSession'
-import type { IUserRepository } from '@/server/repository/user'
 import { origin, rpID } from '@/server/service/passkey/rp'
 import {
   type VerifiedAuthenticationResponse,
@@ -13,12 +10,10 @@ import type {
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/types'
 
-export type GenerateOptionsInput = {
-  userId: UserId
-}
+export type GenerateOptionsInput = Record<string, unknown>
 export type VerifyInput = {
-  userId: UserId
-  body: AuthenticationResponseJSON
+  authenticationResponse: AuthenticationResponseJSON
+  expectedChallenge: string
 }
 
 export type IPasskeyAuthenticationService = {
@@ -33,60 +28,29 @@ export type IPasskeyAuthenticationService = {
 export class PasskeyAuthenticationService
   implements IPasskeyAuthenticationService
 {
-  constructor(
-    private userRepo: IUserRepository,
-    private passkeyRepo: IPasskeyRepository,
-    private authenticationSessionRepo: IPasskeyAuthenticationSessionRepository,
-  ) {}
+  constructor(private passkeyRepo: IPasskeyRepository) {}
 
   async generateOptions(
-    input: GenerateOptionsInput,
+    _input: GenerateOptionsInput,
   ): Promise<PublicKeyCredentialRequestOptionsJSON> {
-    const user = await this.userRepo.find(input.userId)
-    if (!user) {
-      throw new Error('User not found')
-    }
-    const userPasskeys = await this.passkeyRepo.findByUserId(user.id)
-
-    const options = await generateAuthenticationOptions({
+    return await generateAuthenticationOptions({
       rpID,
-      allowCredentials: userPasskeys.map((passkey) => ({
-        id: passkey.id,
-        transports: passkey.transports ?? undefined,
-      })),
+      userVerification: 'preferred',
+      allowCredentials: [],
     })
-
-    await this.authenticationSessionRepo.store(user.id, {
-      challenge: options.challenge,
-    })
-
-    return options
   }
 
   async verify(
     input: VerifyInput,
   ): Promise<Pick<VerifiedAuthenticationResponse, 'verified'>> {
-    const user = await this.userRepo.find(input.userId)
-    if (!user) {
-      throw new Error('User not found')
-    }
-    const authenticationSession = await this.authenticationSessionRepo.load(
-      user.id,
-    )
-    if (!authenticationSession) {
-      throw new Error('No authentication session found')
-    }
-    const passkey = await this.passkeyRepo.findByWebauthnUserIdAndUserId(
-      input.body.id,
-      user.id,
-    )
+    const passkey = await this.passkeyRepo.find(input.authenticationResponse.id)
     if (!passkey) {
       throw new Error('Passkey not found')
     }
 
     const verification = await verifyAuthenticationResponse({
-      response: input.body,
-      expectedChallenge: authenticationSession.challenge,
+      response: input.authenticationResponse,
+      expectedChallenge: input.expectedChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
       credential: {
@@ -95,6 +59,7 @@ export class PasskeyAuthenticationService
         counter: Number(passkey.counter),
         transports: passkey.transports ?? undefined,
       },
+      requireUserVerification: false,
     })
 
     const { verified } = verification
