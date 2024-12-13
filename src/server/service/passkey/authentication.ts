@@ -69,6 +69,7 @@ export class PasskeyAuthenticationService
       const { newCounter } = verification.authenticationInfo!
       passkey.counter = newCounter
       await this.passkeyRepo.save(passkey)
+      await this.passkeyRepo.updateLastUsedAt(passkey.id)
     }
 
     return { verified, user: passkey.user }

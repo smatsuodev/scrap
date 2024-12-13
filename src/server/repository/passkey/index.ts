@@ -1,12 +1,14 @@
 import type { UserId } from '@/common/model/user'
 import * as schema from '@/server/db/schema'
 import type { Passkey } from '@/server/model/passkey'
+import { eq, sql } from 'drizzle-orm'
 import type { DrizzleD1Database } from 'drizzle-orm/d1'
 
 export interface IPasskeyRepository {
   findByUserId(userId: UserId): Promise<Passkey[]>
   find(credentialId: Passkey['id']): Promise<Passkey | null>
   save(passkey: Passkey): Promise<void>
+  updateLastUsedAt(credentialId: Passkey['id']): Promise<void>
 }
 
 export class PasskeyRepository implements IPasskeyRepository {
@@ -64,5 +66,14 @@ export class PasskeyRepository implements IPasskeyRepository {
           transports: passkey.transports,
         },
       })
+  }
+
+  async updateLastUsedAt(credentialId: Passkey['id']): Promise<void> {
+    await this.db
+      .update(schema.passkeys)
+      .set({
+        lastUsedAt: sql`CURRENT_TIMESTAMP`,
+      })
+      .where(eq(schema.passkeys.id, credentialId))
   }
 }
