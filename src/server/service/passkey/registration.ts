@@ -3,7 +3,7 @@ import type { Passkey } from '@/server/model/passkey'
 import type { IPasskeyRepository } from '@/server/repository/passkey'
 import type { IPasskeyRegistrationSessionRepository } from '@/server/repository/passkey/registrationSession'
 import type { IUserRepository } from '@/server/repository/user'
-import { origin, rpID, rpName } from '@/server/service/passkey/rp'
+import { origin, rpId, rpName } from '@/server/service/passkey/rp'
 import {
   type VerifiedRegistrationResponse,
   generateRegistrationOptions,
@@ -50,7 +50,7 @@ export class PasskeyRegistrationService implements IPasskeyRegistrationService {
     const options: PublicKeyCredentialCreationOptionsJSON =
       await generateRegistrationOptions({
         rpName,
-        rpID,
+        rpID: rpId,
         userName: user.id,
         // Don't prompt users for additional information about the authenticator
         attestationType: 'none',
@@ -90,7 +90,7 @@ export class PasskeyRegistrationService implements IPasskeyRegistrationService {
       response: input.registrationResponse,
       expectedChallenge: registrationSession.challenge,
       expectedOrigin: origin,
-      expectedRPID: rpID,
+      expectedRPID: rpId,
       requireUserVerification: false,
     })
 

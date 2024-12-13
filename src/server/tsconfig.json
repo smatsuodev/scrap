@@ -1,5 +1,6 @@
 {
   "extends": ["../../tsconfig.base.json"],
+  "include": ["**/*", "../../vite-env.d.ts"],
   "compilerOptions": {
     "lib": ["ESNext"],
     "types": ["@cloudflare/workers-types", "vite/client", "node"],

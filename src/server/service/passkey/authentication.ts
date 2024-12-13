@@ -1,6 +1,6 @@
 import type { User } from '@/common/model/user'
 import type { IPasskeyRepository } from '@/server/repository/passkey'
-import { origin, rpID } from '@/server/service/passkey/rp'
+import { origin, rpId } from '@/server/service/passkey/rp'
 import {
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
@@ -37,7 +37,7 @@ export class PasskeyAuthenticationService
     _input: GenerateOptionsInput,
   ): Promise<PublicKeyCredentialRequestOptionsJSON> {
     return await generateAuthenticationOptions({
-      rpID,
+      rpID: rpId,
       userVerification: 'preferred',
       allowCredentials: [],
     })
@@ -53,7 +53,7 @@ export class PasskeyAuthenticationService
       response: input.authenticationResponse,
       expectedChallenge: input.expectedChallenge,
       expectedOrigin: origin,
-      expectedRPID: rpID,
+      expectedRPID: rpId,
       credential: {
         id: passkey.id,
         publicKey: passkey.publicKey,
