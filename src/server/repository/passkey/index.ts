@@ -57,9 +57,6 @@ export class PasskeyRepository implements IPasskeyRepository {
       .onConflictDoUpdate({
         target: schema.passkeys.id,
         set: {
-          publicKey: passkey.publicKey,
-          userId: passkey.user.id,
-          webauthnUserId: passkey.webauthnUserId,
           counter: passkey.counter,
           isBackedUp: passkey.isBackedUp,
           deviceType: passkey.deviceType,
