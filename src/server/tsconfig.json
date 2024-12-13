@@ -1,6 +1,8 @@
 {
   "extends": ["../../tsconfig.base.json"],
   "compilerOptions": {
+    "lib": ["ESNext"],
+    "types": ["@cloudflare/workers-types", "vite/client", "node"],
     "composite": true,
     "declaration": true,
     "declarationMap": true,

@@ -4,8 +4,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["@cloudflare/workers-types", "vite/client"],
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "baseUrl": ".",
