@@ -59,7 +59,6 @@ export class PasskeyRegistrationService implements IPasskeyRegistrationService {
           ...(passkey.transports && { transports: passkey.transports }),
         })),
         authenticatorSelection: {
-          // Defaults
           residentKey: 'required',
           userVerification: 'preferred',
           authenticatorAttachment: 'platform',

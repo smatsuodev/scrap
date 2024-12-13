@@ -84,6 +84,7 @@ export const passkeys = sqliteTable(
       AuthenticatorTransportFuture[]
     >(),
     createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+    // 最終ログイン日時
     lastUsedAt: text('last_used_at'),
   },
   (table) => ({
