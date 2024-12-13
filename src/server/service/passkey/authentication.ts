@@ -57,7 +57,7 @@ export class PasskeyAuthenticationService
       credential: {
         id: passkey.id,
         publicKey: passkey.publicKey,
-        counter: Number(passkey.counter),
+        counter: passkey.counter,
         transports: passkey.transports ?? undefined,
       },
       requireUserVerification: false,
