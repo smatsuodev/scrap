@@ -1,5 +1,6 @@
 import type { FragmentId } from '@/common/model/fragment'
 import type { UserId } from '@/common/model/user'
+import { uint8ArrayAsBase64 } from '@/server/db/customType'
 import type {
   AuthenticatorTransportFuture,
   Base64URLString,
@@ -7,7 +8,6 @@ import type {
 } from '@simplewebauthn/types'
 import { relations, sql } from 'drizzle-orm'
 import { index, int, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
-import { blob } from 'drizzle-orm/sqlite-core/columns/blob'
 
 export const fragments = sqliteTable('fragments', {
   id: int().$type<FragmentId>().primaryKey({ autoIncrement: true }),
@@ -64,9 +64,7 @@ export const passkeys = sqliteTable(
   'passkeys',
   {
     id: text().$type<Base64URLString>().primaryKey(),
-    publicKey: blob('public_key', { mode: 'buffer' })
-      .$type<Uint8Array>()
-      .notNull(),
+    publicKey: uint8ArrayAsBase64('public_key').notNull(),
     userId: text('user_id')
       .$type<UserId>()
       .notNull()

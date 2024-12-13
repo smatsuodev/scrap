@@ -78,6 +78,13 @@
       "when": 1734080866032,
       "tag": "0010_pretty_genesis",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1734100559451,
+      "tag": "0011_busy_green_goblin",
+      "breakpoints": true
     }
   ]
 }
