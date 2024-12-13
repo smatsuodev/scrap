@@ -17,15 +17,13 @@ export class PasskeyRepository implements IPasskeyRepository {
       where: (users, { eq }) => eq(users.id, userId),
       with: { passkeys: true },
     })
+    if (!user) return []
 
-    return (
-      user?.passkeys.map((p) => ({
-        ...p,
-        user: {
-          id: user.id,
-        },
-      })) ?? []
-    )
+    const passkeys: Passkey[] = user.passkeys.map((p) => ({
+      ...p,
+      user,
+    }))
+    return passkeys
   }
 
   async find(credentialId: Passkey['id']) {
