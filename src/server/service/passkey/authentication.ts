@@ -66,7 +66,7 @@ export class PasskeyAuthenticationService
     if (verified) {
       // biome-ignore lint/style/noNonNullAssertion:
       const { newCounter } = verification.authenticationInfo!
-      passkey.counter = BigInt(newCounter)
+      passkey.counter = newCounter
       await this.passkeyRepo.save(passkey)
     }
 

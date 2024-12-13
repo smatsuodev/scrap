@@ -75,7 +75,7 @@ export const passkeys = sqliteTable(
       .$type<Base64URLString>()
       .notNull()
       .unique(),
-    counter: blob({ mode: 'bigint' }).notNull(),
+    counter: int().notNull(),
     isBackedUp: int('is_backed_up', { mode: 'boolean' }).notNull(),
     deviceType: text('device_type', {
       enum: ['singleDevice', 'multiDevice'],

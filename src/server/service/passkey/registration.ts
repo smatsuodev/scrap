@@ -3,7 +3,7 @@ import type { Passkey } from '@/server/model/passkey'
 import type { IPasskeyRepository } from '@/server/repository/passkey'
 import type { IPasskeyRegistrationSessionRepository } from '@/server/repository/passkey/registrationSession'
 import type { IUserRepository } from '@/server/repository/user'
-import { rpID, rpName } from '@/server/service/passkey/rp'
+import { origin, rpID, rpName } from '@/server/service/passkey/rp'
 import {
   type VerifiedRegistrationResponse,
   generateRegistrationOptions,
@@ -106,7 +106,7 @@ export class PasskeyRegistrationService implements IPasskeyRegistrationService {
         publicKey: credential.publicKey,
         user: user,
         webauthnUserId: registrationSession.webauthnUserId,
-        counter: BigInt(credential.counter),
+        counter: credential.counter,
         isBackedUp: credentialBackedUp,
         deviceType: credentialDeviceType,
         transports: credential.transports ?? null,

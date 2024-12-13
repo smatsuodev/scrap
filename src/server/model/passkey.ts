@@ -10,7 +10,7 @@ export type Passkey = {
   publicKey: Uint8Array
   user: User
   webauthnUserId: Base64URLString
-  counter: bigint
+  counter: number
   isBackedUp: boolean
   deviceType: CredentialDeviceType
   transports: AuthenticatorTransportFuture[] | null
