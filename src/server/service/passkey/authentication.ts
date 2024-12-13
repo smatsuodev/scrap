@@ -1,7 +1,7 @@
+import type { User } from '@/common/model/user'
 import type { IPasskeyRepository } from '@/server/repository/passkey'
 import { origin, rpID } from '@/server/service/passkey/rp'
 import {
-  type VerifiedAuthenticationResponse,
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
 } from '@simplewebauthn/server'
@@ -16,13 +16,16 @@ export type VerifyInput = {
   expectedChallenge: string
 }
 
+export type VerifyOutput = {
+  verified: boolean
+  user: User
+}
+
 export type IPasskeyAuthenticationService = {
   generateOptions(
     input: GenerateOptionsInput,
   ): Promise<PublicKeyCredentialRequestOptionsJSON>
-  verify(
-    input: VerifyInput,
-  ): Promise<Pick<VerifiedAuthenticationResponse, 'verified'>>
+  verify(input: VerifyInput): Promise<VerifyOutput>
 }
 
 export class PasskeyAuthenticationService
@@ -40,9 +43,7 @@ export class PasskeyAuthenticationService
     })
   }
 
-  async verify(
-    input: VerifyInput,
-  ): Promise<Pick<VerifiedAuthenticationResponse, 'verified'>> {
+  async verify(input: VerifyInput): Promise<VerifyOutput> {
     const passkey = await this.passkeyRepo.find(input.authenticationResponse.id)
     if (!passkey) {
       throw new Error('Passkey not found')
@@ -70,6 +71,6 @@ export class PasskeyAuthenticationService
       await this.passkeyRepo.save(passkey)
     }
 
-    return { verified }
+    return { verified, user: passkey.user }
   }
 }
