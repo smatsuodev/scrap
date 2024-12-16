@@ -2,7 +2,7 @@ import EditFragmentForm from '@/client/component/EditFragmentForm'
 import { Markdown } from '@/client/component/markdown/Markdown'
 import useEditFragmentDraft from '@/client/hook/useEditFragmentDraft'
 import type { Fragment } from '@/common/model/fragment'
-import { ActionIcon, Box, Card, Group, Stack } from '@mantine/core'
+import { ActionIcon, Box, Card, Flex, Group, Stack, Text } from '@mantine/core'
 import { useHover } from '@mantine/hooks'
 import { IconPencil } from '@tabler/icons-react'
 import { useState } from 'react'
@@ -74,7 +74,14 @@ export function FragmentViewer({
             fragment={fragment}
           />
         ) : (
-          <FragmentContent fragment={fragment} />
+          <>
+            <FragmentContent fragment={fragment} />
+            <Flex justify='flex-end'>
+              <Text size='xs' c='dimmed'>
+                {fragment.authorId}
+              </Text>
+            </Flex>
+          </>
         )}
       </Card>
     </Stack>
