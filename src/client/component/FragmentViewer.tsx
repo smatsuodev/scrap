@@ -73,14 +73,14 @@ export function FragmentViewer({
             fragment={fragment}
           />
         ) : (
-          <>
+          <Stack gap='6px'>
             <FragmentContent fragment={fragment} />
             <Flex justify='flex-end'>
               <Text size='xs' c='dimmed'>
                 {fragment.authorId}
               </Text>
             </Flex>
-          </>
+          </Stack>
         )}
       </Card>
     </Stack>
