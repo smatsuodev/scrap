@@ -62,7 +62,10 @@ export default defineConfig(({ mode, command }) => {
     }
   }
 
+  console.log(`CF_PAGES_URL: ${process.env.CF_PAGES_URL}`)
+
   return {
+    envPrefix: ['VITE_', 'CF_'],
     ssr: {
       external: ['react', 'react-dom'],
     },

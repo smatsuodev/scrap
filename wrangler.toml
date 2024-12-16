@@ -6,6 +6,10 @@ compatibility_flags = [ "nodejs_compat" ]
 [vars]
 BUN_VERSION = '1.1.38'
 
+[env.production.vars]
+BUN_VERSION = '1.1.38'
+CF_PAGES_URL = "https://scrap.smatsuo.dev"
+
 [[kv_namespaces]]
 binding = "SESSION_KV"
 id = "c05d577e52254456931cef1e83fb0cf4"
