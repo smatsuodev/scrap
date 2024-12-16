@@ -63,7 +63,14 @@ const scraps = honoFactory
         fragments: true,
       },
     })
-    return c.json(scrap)
+    if (!scrap) {
+      throw new HTTPException(404)
+    }
+
+    const scrapModel: Scrap = {
+      ...scrap,
+    }
+    return c.json(scrapModel)
   })
   .put(
     '/:id',
