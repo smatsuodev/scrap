@@ -6,7 +6,6 @@ import { ActionIcon, Box, Card, Flex, Group, Stack, Text } from '@mantine/core'
 import { useHover } from '@mantine/hooks'
 import { IconPencil } from '@tabler/icons-react'
 import { useState } from 'react'
-import classes from './FragmentViewer.module.css'
 
 interface FragmentViewerProps {
   fragment: Fragment
@@ -66,7 +65,7 @@ export function FragmentViewer({
           <ToolBox onClickEdit={() => setShowEditor(true)} />
         </Box>
       )}
-      <Card withBorder className={classes.markdown}>
+      <Card withBorder>
         {showEditor ? (
           <EditFragmentForm
             closeEditor={() => setShowEditor(false)}

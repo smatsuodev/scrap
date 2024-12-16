@@ -4,6 +4,7 @@ import type { Root, RootContent } from 'mdast'
 import { useEffect, useState } from 'react'
 import { remark } from 'remark'
 import remarkGfm from 'remark-gfm'
+import classes from './Markdown.module.css'
 
 type MarkdownProps = {
   markdown: string
@@ -24,7 +25,11 @@ export function Markdown({ markdown }: MarkdownProps) {
     )
   }
 
-  return <NodeRenderer nodes={rootNode.children} />
+  return (
+    <div className={classes.markdown}>
+      <NodeRenderer nodes={rootNode.children} />
+    </div>
+  )
 }
 
 type NodeRendererProps = {
