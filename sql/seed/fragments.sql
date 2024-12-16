@@ -1,1 +1,0 @@
-INSERT INTO fragments (content) VALUES ('Hello, world!'), ('こんにちは、世界！'), ('你好、世界！');
